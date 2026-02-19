@@ -57,10 +57,10 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right: Live demo */}
-          <div className="relative">
-            <div className="rounded-xl border border-border bg-surface p-6 shadow-2xl shadow-accent/5">
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-border">
+          {/* Right: Live demo — fixed height so it doesn't push content below */}
+          <div className="relative h-[540px]">
+            <div className="absolute inset-0 rounded-xl border border-border bg-surface p-6 shadow-2xl shadow-accent/5 flex flex-col">
+              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-border shrink-0">
                 <div className="h-3 w-3 rounded-full bg-red-500/60" />
                 <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
                 <div className="h-3 w-3 rounded-full bg-green-500/60" />
@@ -68,7 +68,9 @@ export function Hero() {
                   agent-workflow.tsx
                 </span>
               </div>
-              <HeroDemoTimeline />
+              <div className="flex-1 overflow-hidden">
+                <HeroDemoTimeline />
+              </div>
             </div>
           </div>
         </div>
