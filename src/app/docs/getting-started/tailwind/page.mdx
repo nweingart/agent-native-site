@@ -1,0 +1,114 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# Tailwind Integration
+
+agent-native plays nicely with Tailwind CSS. Three modes, from easiest to most custom.
+
+## Mode 1: Use our styles as-is
+
+Just import the stylesheet. Everything works. Tailwind classes on your surrounding layout won't conflict.
+
+<CodeBlock
+  code={`@import "tailwindcss";
+@import "agent-native/styles";
+
+/* That's it. No conflicts. */`}
+  lang="css"
+  filename="globals.css"
+/>
+
+## Mode 2: Override with classNames
+
+The `classNames` prop lets you apply Tailwind classes to every internal element:
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}
+  classNames={{
+    root: "rounded-xl border border-zinc-700 bg-zinc-900 p-4",
+    step: "rounded-lg px-3 py-2 hover:bg-zinc-800/50 transition-colors",
+    indicator: "ring-2 ring-zinc-600",
+    stepBody: "ml-3",
+    connector: "bg-zinc-700",
+    tier: "bg-zinc-800/30 rounded-lg p-3",
+    tierHeader: "text-xs uppercase tracking-wider text-zinc-500",
+    approval: "border-purple-500/30 bg-purple-500/5",
+    approveButton: "bg-green-600 hover:bg-green-500 text-white rounded-md px-4 py-2",
+    rejectButton: "bg-zinc-700 hover:bg-zinc-600 text-white rounded-md px-4 py-2",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+<Callout variant="info">
+  Classes from `classNames` are **appended** to the default BEM classes, not replacing them. This means you get the base structure for free and only override what you want.
+</Callout>
+
+## Mode 3: Go fully custom
+
+Skip our stylesheet entirely and style from scratch using the BEM class names or data attributes:
+
+<CodeBlock
+  code={`/* Don't import agent-native/styles */
+/* Target BEM classes directly */
+.an-timeline { @apply flex flex-col gap-2; }
+.an-timeline__step { @apply flex items-start gap-3 p-3; }
+.an-timeline__step--running { @apply bg-blue-500/5 border-l-2 border-blue-500; }
+.an-timeline__step--complete { @apply opacity-75; }
+.an-timeline__indicator { @apply w-6 h-6 rounded-full; }
+
+/* Or use data attributes */
+[data-status="running"] { @apply ring-2 ring-blue-500; }
+[data-status="error"] { @apply ring-2 ring-red-500; }`}
+  lang="css"
+/>
+
+## Why it just works
+
+agent-native wraps all its styles in `@layer agent-native`:
+
+<CodeBlock
+  code={`/* Inside agent-native/styles */
+@layer agent-native {
+  .an-timeline { /* ... */ }
+  .an-timeline__step { /* ... */ }
+}`}
+  lang="css"
+/>
+
+Since Tailwind utilities are unlayered, they automatically have higher specificity. No `!important` needed.
+
+<CodeBlock
+  code={`/* Specificity order (lowest to highest):
+   1. @layer agent-native  — library defaults
+   2. @layer utilities      — (if you layer Tailwind, still above)
+   3. Unlayered CSS         — your overrides + Tailwind utilities
+*/`}
+  lang="css"
+/>
+
+## Data attribute selectors
+
+For conditional Tailwind styling based on step state, use data attributes:
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}
+  classNames={{
+    step: "data-[status=running]:ring-2 data-[status=running]:ring-blue-500 data-[status=error]:ring-red-500",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+Available data attributes:
+- `data-status` — on each step (`pending`, `running`, `complete`, `error`, etc.)
+- `data-step-id` — on each step (the step's `id` value)
+- `data-tier-id` — on tier containers
+- `data-approval-id` — on the approval gate
+
+## Next steps
+
+- [AgentTimeline](/docs/components/agent-timeline) — Full component API with all `classNames` keys
+- [Theming](/docs/getting-started/theming) — CSS variable overrides

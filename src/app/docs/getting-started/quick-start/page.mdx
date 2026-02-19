@@ -1,0 +1,113 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+import { BasicTimeline } from "@/components/demos/BasicTimeline";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+
+# Quick Start
+
+Build a working agent timeline in 10 seconds.
+
+## The minimal example
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import 'agent-native/styles';
+
+const steps = [
+  { id: '1', label: 'Scanning repository', status: 'complete' },
+  { id: '2', label: 'Analyzing files', status: 'complete' },
+  { id: '3', label: 'Generating plan', status: 'running' },
+  { id: '4', label: 'Applying changes', status: 'pending' },
+  { id: '5', label: 'Verification', status: 'pending' },
+];
+
+function AgentWorkflow() {
+  return <AgentTimeline steps={steps} />;
+}`}
+  lang="tsx"
+  filename="AgentWorkflow.tsx"
+/>
+
+That's it. No providers, no configuration objects, no state machines. Just an array of steps with statuses.
+
+## Live result
+
+<LiveDemo title="BasicTimeline">
+  <BasicTimeline />
+</LiveDemo>
+
+## The step data structure
+
+Each step needs at minimum an `id`, `label`, and `status`:
+
+<CodeBlock
+  code={`interface AgentStep {
+  id: string;          // Unique identifier
+  label: string;       // Display text
+  status: StepStatus;  // 'pending' | 'running' | 'complete' | 'error' | ...
+  description?: string;   // Optional subtext
+  startedAt?: number;     // Unix ms — enables elapsed time
+  completedAt?: number;   // Unix ms — freezes elapsed timer
+  error?: string;         // Error message for failed steps
+}`}
+  lang="typescript"
+/>
+
+## Status types
+
+agent-native supports 8 statuses:
+
+| Status | Visual | Use case |
+|--------|--------|----------|
+| `pending` | Gray dot | Step hasn't started |
+| `running` | Blue spinner | Step is actively executing |
+| `streaming` | Blue spinner | LLM is streaming output |
+| `waiting_approval` | Purple glow | Needs human approval |
+| `complete` | Green checkmark | Step finished successfully |
+| `error` | Red X | Step failed |
+| `skipped` | Gray dot | Step was skipped |
+| `cancelled` | Gray dot | Step was cancelled |
+
+## Wiring to real data
+
+In practice, your steps come from your agent framework. Here's how you'd wire it up:
+
+<CodeBlock
+  code={`function AgentUI() {
+  const [steps, setSteps] = useState<AgentStep[]>([]);
+
+  useEffect(() => {
+    // Subscribe to your agent's event stream
+    agent.on('step:start', (step) => {
+      setSteps(prev => [...prev, {
+        id: step.id,
+        label: step.name,
+        status: 'running',
+        startedAt: Date.now(),
+      }]);
+    });
+
+    agent.on('step:complete', (step) => {
+      setSteps(prev => prev.map(s =>
+        s.id === step.id
+          ? { ...s, status: 'complete', completedAt: Date.now() }
+          : s
+      ));
+    });
+  }, []);
+
+  return <AgentTimeline steps={steps} showElapsedTime />;
+}`}
+  lang="tsx"
+  filename="AgentUI.tsx"
+/>
+
+<Callout variant="tip">
+  agent-native is framework-agnostic. It works with LangChain, CrewAI, Vercel AI SDK, or any custom agent — anything that can produce an array of steps.
+</Callout>
+
+## Next steps
+
+- [Theming](/docs/getting-started/theming) — Customize colors and design tokens
+- [Tailwind Integration](/docs/getting-started/tailwind) — Use Tailwind classes directly
+- [AgentTimeline](/docs/components/agent-timeline) — Full API reference

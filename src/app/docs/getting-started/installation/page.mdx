@@ -1,0 +1,61 @@
+import { PackageInstall } from "@/components/mdx/PackageInstall";
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# Installation
+
+Get agent-native installed and ready to use in under a minute.
+
+## Install the package
+
+<PackageInstall pkg="agent-native" />
+
+<Callout variant="info">
+  agent-native has a single peer dependency: **React 18+**. No other runtime dependencies.
+</Callout>
+
+## Import styles
+
+Add the stylesheet import to your app's entry point — `layout.tsx`, `_app.tsx`, `main.tsx`, or wherever you load global CSS:
+
+<CodeBlock
+  code={`import 'agent-native/styles';`}
+  lang="typescript"
+  filename="app/layout.tsx"
+/>
+
+If you're using Tailwind, you can also add it to your CSS file:
+
+<CodeBlock
+  code={`@import "tailwindcss";
+@import "agent-native/styles";`}
+  lang="css"
+  filename="globals.css"
+/>
+
+## Entry points
+
+agent-native ships four entry points for tree-shaking flexibility:
+
+<CodeBlock
+  code={`// Everything: components, hooks, types, utilities
+import { AgentTimeline, useElapsedTime } from 'agent-native';
+
+// Hooks only — no component code in bundle
+import { useVisualMemory, useAutoScroll } from 'agent-native/hooks';
+
+// Types only — zero runtime cost
+import type { AgentStep, StepTier } from 'agent-native/types';
+
+// Pre-built CSS
+import 'agent-native/styles';`}
+  lang="typescript"
+/>
+
+## TypeScript
+
+Types are included in the package — no separate `@types` install needed. The package ships with full `.d.ts` declarations for every export.
+
+## Next steps
+
+Ready to build? Head to the [Quick Start](/docs/getting-started/quick-start) guide.

@@ -1,0 +1,127 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# Theming & Dark Mode
+
+agent-native uses CSS custom properties for all visual tokens. Override them to match your app's design system.
+
+## Dark mode
+
+Dark mode activates automatically when either `.dark` or `.an-dark` is present on any ancestor element:
+
+<CodeBlock
+  code={`<!-- Tailwind convention — works automatically -->
+<html class="dark">
+
+<!-- Library's own class -->
+<html class="an-dark">
+
+<!-- Both work. Use whichever your app already uses. -->`}
+  lang="html"
+/>
+
+<Callout variant="info">
+  If your app already sets `className="dark"` on `<html>` (the Tailwind convention), agent-native's dark mode works with zero configuration.
+</Callout>
+
+## CSS variables overview
+
+All tokens use the `--an-` prefix to avoid collisions with your app's variables. There are 40+ tokens organized into categories:
+
+### Surfaces
+
+<CodeBlock
+  code={`:root {
+  --an-surface-0: #ffffff;  /* Base background */
+  --an-surface-1: #f8f9fa;  /* Subtle background */
+  --an-surface-2: #f1f3f5;  /* Muted background */
+  --an-surface-3: #e9ecef;  /* Border-like background */
+}
+
+.dark {
+  --an-surface-0: #1a1b1e;
+  --an-surface-1: #25262b;
+  --an-surface-2: #2c2e33;
+  --an-surface-3: #373a40;
+}`}
+  lang="css"
+/>
+
+### Status colors
+
+<CodeBlock
+  code={`:root {
+  --an-status-pending: #868e96;
+  --an-status-running: #339af0;
+  --an-status-streaming: #339af0;
+  --an-status-complete: #51cf66;
+  --an-status-error: #ff6b6b;
+  --an-status-warning: #fcc419;
+  --an-status-approval: #cc5de8;
+  --an-status-skipped: #adb5bd;
+  --an-status-cancelled: #adb5bd;
+}`}
+  lang="css"
+/>
+
+### Typography
+
+<CodeBlock
+  code={`:root {
+  --an-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --an-font-mono: 'SF Mono', 'Fira Code', Menlo, monospace;
+  --an-font-size-sm: 0.8125rem;
+  --an-font-size-base: 0.875rem;
+  --an-font-size-md: 1rem;
+}`}
+  lang="css"
+/>
+
+## Overriding tokens
+
+Override any token in your CSS to match your brand:
+
+<CodeBlock
+  code={`/* Match your app's color scheme */
+:root {
+  --an-status-running: #6366f1;    /* Indigo instead of blue */
+  --an-status-complete: #22c55e;   /* Tailwind green */
+  --an-surface-0: #0f172a;        /* Slate-900 */
+  --an-surface-1: #1e293b;        /* Slate-800 */
+  --an-border-color: #334155;     /* Slate-700 */
+  --an-font-sans: 'Inter', sans-serif;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+## Layer architecture
+
+All agent-native component styles are wrapped in `@layer agent-native`. This means:
+
+1. Your unlayered CSS automatically wins over library styles
+2. Tailwind utilities automatically win (they're unlayered too)
+3. No `!important` needed, ever
+
+<CodeBlock
+  code={`/* This just works — no specificity issues */
+.an-timeline__step {
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+/* Tailwind classes on classNames prop also just work */
+<AgentTimeline
+  classNames={{ step: "rounded-xl px-4 py-3" }}
+/>`}
+  lang="css"
+/>
+
+<Callout variant="tip">
+  The `@layer` architecture means you can progressively override styles — start with the defaults, then customize as needed without fighting specificity.
+</Callout>
+
+## Next steps
+
+- [Tailwind Integration](/docs/getting-started/tailwind) — Deep dive into Tailwind workflows
+- [AgentTimeline](/docs/components/agent-timeline) — Full `classNames` reference

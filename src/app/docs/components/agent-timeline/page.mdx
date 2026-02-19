@@ -1,0 +1,270 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { ClassNamesTable } from "@/components/mdx/ClassNamesTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { BasicTimeline } from "@/components/demos/BasicTimeline";
+import { TimelineWithTiers } from "@/components/demos/TimelineWithTiers";
+import { TimelineWithApproval } from "@/components/demos/TimelineWithApproval";
+import { TimelineWithElapsed } from "@/components/demos/TimelineWithElapsed";
+import { TimelineTailwind } from "@/components/demos/TimelineTailwind";
+
+# AgentTimeline
+
+A vertical timeline component for rendering AI agent workflows with real-time status updates, parallel execution tiers, and human-in-the-loop approval gates.
+
+<FeatureList
+  features={[
+    "8 step statuses: pending, running, streaming, waiting_approval, complete, error, skipped, cancelled",
+    "Parallel execution tiers for concurrent steps",
+    "Built-in approval gates with approve/reject actions",
+    "Live elapsed time counters on running and completed steps",
+    "Auto-scroll keeps the latest step in view",
+    "Full keyboard navigation and ARIA support",
+    "Fully customizable via classNames, CSS variables, and render slots",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <BasicTimeline />
+</LiveDemo>
+
+## Installation
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep } from 'agent-native';
+
+const steps: AgentStep[] = [
+  { id: '1', label: 'Scanning repository', status: 'complete', description: 'Found 847 files' },
+  { id: '2', label: 'Analyzing dependencies', status: 'complete' },
+  { id: '3', label: 'Generating plan', status: 'running', startedAt: Date.now() },
+  { id: '4', label: 'Applying changes', status: 'pending' },
+  { id: '5', label: 'Verification', status: 'pending' },
+];
+
+function MyTimeline() {
+  return <AgentTimeline steps={steps} />;
+}`}
+  lang="tsx"
+/>
+
+---
+
+## Examples
+
+### Parallel Tiers
+
+Group steps that execute concurrently. The tier renders them side-by-side with a shared header.
+
+<LiveDemo title="Parallel Tiers">
+  <TimelineWithTiers />
+</LiveDemo>
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep, StepTier } from 'agent-native';
+
+const steps: AgentStep[] = [
+  { id: 'install', label: 'Installing dependencies', status: 'complete' },
+  { id: 'lint', label: 'ESLint', status: 'complete', description: '0 errors' },
+  { id: 'typecheck', label: 'TypeScript', status: 'complete', description: 'No errors' },
+  { id: 'test', label: 'Vitest', status: 'running', description: '47/52 passing' },
+  { id: 'build', label: 'Building for production', status: 'pending' },
+  { id: 'deploy', label: 'Deploying to staging', status: 'pending' },
+];
+
+const tiers: StepTier[] = [
+  { id: 'checks', label: 'Quality Checks', stepIds: ['lint', 'typecheck', 'test'] },
+];
+
+<AgentTimeline steps={steps} tiers={tiers} />`}
+  lang="tsx"
+/>
+
+### Approval Gate
+
+Block progress until a human approves. Wire up `onApprove` and `onReject` handlers.
+
+<LiveDemo title="Approval Gate">
+  <TimelineWithApproval />
+</LiveDemo>
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep, ApprovalRequest } from 'agent-native';
+
+const [request, setRequest] = useState<ApprovalRequest | undefined>({
+  id: 'gate-1',
+  stepId: 'preview',
+  title: 'Apply refactoring changes?',
+  description: '3 files modified, 247 lines changed',
+  createdAt: Date.now(),
+});
+
+<AgentTimeline
+  steps={steps}
+  approvalRequest={request}
+  onApprove={(req) => {
+    setRequest(undefined);
+    // Start next step...
+  }}
+  onReject={(req) => {
+    setRequest(undefined);
+    // Cancel workflow...
+  }}
+/>`}
+  lang="tsx"
+/>
+
+### Elapsed Time
+
+Show live counters on running steps. Timers freeze when `completedAt` is set.
+
+<LiveDemo title="Elapsed Time">
+  <TimelineWithElapsed />
+</LiveDemo>
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}   // steps with startedAt/completedAt timestamps
+  showElapsedTime
+/>`}
+  lang="tsx"
+/>
+
+### Tailwind Styling
+
+Override every element with Tailwind classes via the `classNames` prop:
+
+<LiveDemo title="Tailwind Styled">
+  <TimelineTailwind />
+</LiveDemo>
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}
+  classNames={{
+    root: "rounded-xl border border-zinc-700 bg-zinc-900 p-4",
+    step: "rounded-lg px-3 py-2 hover:bg-zinc-800/50 transition-colors",
+    indicator: "ring-2 ring-zinc-600",
+    stepBody: "ml-3",
+    connector: "bg-zinc-700",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+### Custom Render Slots
+
+Replace the default step body or status indicator with your own renderers:
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}
+  renderStepContent={(step) => (
+    <div>
+      <span className="font-bold">{step.label}</span>
+      {step.toolCalls?.map(tc => (
+        <div key={tc.id} className="text-xs text-zinc-500">
+          Called {tc.name}
+        </div>
+      ))}
+    </div>
+  )}
+  renderStepIndicator={(step) => (
+    <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
+      {step.status === 'complete' ? '✓' : step.status === 'running' ? '⟳' : '○'}
+    </div>
+  )}
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "steps", type: "AgentStep[]", description: "The list of agent steps to display" },
+    { name: "tiers", type: "StepTier[]", description: "Optional parallel tier groupings" },
+    { name: "activeStepId", type: "string", description: "ID of the currently focused/active step" },
+    { name: "failedStepIds", type: "string[]", description: "Override these step IDs to error status" },
+    { name: "approvalRequest", type: "ApprovalRequest", description: "Renders an inline approval gate at the bottom" },
+    { name: "onApprove", type: "(req: ApprovalRequest) => void", description: "Fires when user clicks Approve" },
+    { name: "onReject", type: "(req: ApprovalRequest) => void", description: "Fires when user clicks Reject" },
+    { name: "onStepClick", type: "(step: AgentStep) => void", description: "Makes steps clickable with keyboard support" },
+    { name: "showElapsedTime", type: "boolean", description: "Shows live timers on running/completed steps" },
+    { name: "showConnectors", type: "boolean", default: "true", description: "Vertical lines between steps" },
+    { name: "autoScroll", type: "boolean", default: "true", description: "Keeps latest step scrolled into view" },
+    { name: "renderStepContent", type: "(step: AgentStep) => ReactNode", description: "Replace default step body rendering" },
+    { name: "renderStepIndicator", type: "(step: AgentStep) => ReactNode", description: "Replace default status indicator" },
+    { name: "renderTierHeader", type: "(tier: StepTier) => ReactNode", description: "Replace default tier header" },
+    { name: "classNames", type: "TimelineClassNames", description: "Class overrides for every internal element" },
+    { name: "className", type: "string", description: "Shorthand for classNames.root" },
+    { name: "stepClassName", type: "string", description: "Shorthand for classNames.step" },
+  ]}
+/>
+
+## classNames
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Outer timeline container" },
+    { key: "step", target: "Each step row" },
+    { key: "indicator", target: "Status circle (spinner, checkmark, etc.)" },
+    { key: "stepBody", target: "Label + description + elapsed time area" },
+    { key: "connector", target: "Vertical line between steps" },
+    { key: "tier", target: "Parallel group container" },
+    { key: "tierHeader", target: "Header above parallel group" },
+    { key: "approval", target: "Approval gate box" },
+    { key: "approveButton", target: "The Approve button" },
+    { key: "rejectButton", target: "The Reject button" },
+  ]}
+/>
+
+## Compound Subcomponents
+
+`AgentTimeline` exposes its internal building blocks for advanced composition:
+
+| Component | Access | Description |
+|-----------|--------|-------------|
+| `TimelineStep` | `AgentTimeline.Step` | Individual step row |
+| `TimelineConnector` | `AgentTimeline.Connector` | Vertical line between steps |
+| `TimelineTier` | `AgentTimeline.Tier` | Parallel execution group |
+| `TimelineApprovalGate` | `AgentTimeline.ApprovalGate` | Approval prompt |
+| `TimelineSummary` | `AgentTimeline.Summary` | Status count badges |
+
+## Data Attributes
+
+| Element | Attribute | Example |
+|---------|-----------|---------|
+| Step | `data-step-id` | `"step-3"` |
+| Step | `data-status` | `"running"` |
+| Tier | `data-tier-id` | `"parallel-1"` |
+| Approval gate | `data-approval-id` | `"gate-1"` |
+
+Use in CSS: `[data-status="error"] { background: red; }`
+
+Use in Tailwind: `data-[status=running]:ring-2 data-[status=running]:ring-blue-500`
+
+## Accessibility
+
+- Timeline uses `role="list"` with each step as `role="listitem"`
+- Running steps are announced as `aria-busy="true"`
+- Approval gate buttons are real `<button>` elements with labels
+- `onStepClick` adds `tabIndex={0}` and keyboard handlers (Enter/Space)
+- Elapsed time uses `aria-live="polite"` for screen reader updates
+- `prefers-reduced-motion: reduce` disables animations and uses `an-pulse` instead of `an-spin`
