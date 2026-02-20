@@ -1,0 +1,198 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { SummaryMixedDemo, SummaryCompleteDemo, SummaryInteractiveDemo } from "@/components/demos/StandaloneSummary";
+
+# TimelineSummary
+
+Renders status count badges for a set of steps. Shows at a glance how many steps are complete, running, errored, or pending. Useful as a header or footer for your timeline.
+
+<FeatureList
+  features={[
+    "Counts steps by status automatically",
+    "Ordered display: complete, running, error, pending",
+    "Only shows badges for statuses with at least one step",
+    "Reuses tier badge styling for visual consistency",
+    "Class override support",
+    "Reactive — updates as step statuses change",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo title="Mixed Statuses">
+  <SummaryMixedDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`// From the main package
+import { TimelineSummary } from 'agent-native';
+
+// Or via the compound component
+import { AgentTimeline } from 'agent-native';
+// Use as AgentTimeline.Summary`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TimelineSummary } from 'agent-native';
+import type { AgentStep } from 'agent-native';
+
+const steps: AgentStep[] = [
+  { id: '1', label: 'Scan', status: 'complete' },
+  { id: '2', label: 'Analyze', status: 'complete' },
+  { id: '3', label: 'Build', status: 'running' },
+  { id: '4', label: 'Test', status: 'pending' },
+  { id: '5', label: 'Deploy', status: 'pending' },
+];
+
+function WorkflowSummary() {
+  return <TimelineSummary steps={steps} />;
+}`}
+  lang="tsx"
+  filename="WorkflowSummary.tsx"
+/>
+
+---
+
+## Examples
+
+### Mixed Status
+
+Shows badges for each status that has at least one step.
+
+<LiveDemo title="Mixed Statuses">
+  <SummaryMixedDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`// 3 complete, 1 running, 1 error, 2 pending
+const steps = [
+  { id: '1', label: 'Step 1', status: 'complete' },
+  { id: '2', label: 'Step 2', status: 'complete' },
+  { id: '3', label: 'Step 3', status: 'complete' },
+  { id: '4', label: 'Step 4', status: 'running' },
+  { id: '5', label: 'Step 5', status: 'error' },
+  { id: '6', label: 'Step 6', status: 'pending' },
+  { id: '7', label: 'Step 7', status: 'pending' },
+];
+
+<TimelineSummary steps={steps} />
+// Renders: [3 complete] [1 running] [1 error] [2 pending]`}
+  lang="tsx"
+/>
+
+### All Complete
+
+When all steps share the same status, only one badge renders.
+
+<LiveDemo title="All Complete">
+  <SummaryCompleteDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`// All 5 steps complete
+<TimelineSummary steps={allCompleteSteps} />
+// Renders: [5 complete]`}
+  lang="tsx"
+/>
+
+### Interactive
+
+Click "Advance step" to see the summary update in real time as statuses change.
+
+<LiveDemo title="Interactive Summary">
+  <SummaryInteractiveDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const [steps, setSteps] = useState(initialSteps);
+
+// Update step statuses over time...
+// Summary re-renders automatically
+
+<TimelineSummary steps={steps} />`}
+  lang="tsx"
+/>
+
+---
+
+## Common Patterns
+
+### Timeline Header
+
+Place the summary above your timeline as a progress overview:
+
+<CodeBlock
+  code={`function AgentWorkflow({ steps }) {
+  return (
+    <div>
+      <TimelineSummary steps={steps} />
+      <div className="mt-4">
+        <AgentTimeline steps={steps} />
+      </div>
+    </div>
+  );
+}`}
+  lang="tsx"
+/>
+
+### Dashboard Widget
+
+Use the summary standalone as a compact status indicator:
+
+<CodeBlock
+  code={`function WorkflowCard({ name, steps }) {
+  return (
+    <div className="p-4 rounded-lg border border-border">
+      <h3 className="font-medium mb-2">{name}</h3>
+      <TimelineSummary steps={steps} />
+    </div>
+  );
+}
+
+// Render multiple workflow cards
+<div className="grid grid-cols-3 gap-4">
+  <WorkflowCard name="CI Pipeline" steps={ciSteps} />
+  <WorkflowCard name="Deploy" steps={deploySteps} />
+  <WorkflowCard name="Migration" steps={migrationSteps} />
+</div>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "steps", type: "AgentStep[]", description: "The steps to summarize. Counts are computed by status." },
+    { name: "className", type: "string", description: "Additional class on the summary root element" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-timeline__tier-header` | Root container (reuses tier header flex layout) |
+| `an-timeline__tier-badge` | Each status count badge (pill shape, monospace) |
+
+<Callout variant="info">
+  TimelineSummary reuses the tier header and badge classes for visual consistency across the library. You can override these with the `className` prop or target them directly in CSS.
+</Callout>
+
+## Display Order
+
+Badges always render in this order (skipping any with zero count):
+
+1. **complete** — green
+2. **running** — blue
+3. **error** — red
+4. **pending** — gray

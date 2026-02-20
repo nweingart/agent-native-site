@@ -26,8 +26,8 @@ export const docsNav: NavSection[] = [
       { title: "TimelineStep", href: "/docs/components/timeline-step" },
       { title: "TimelineTier", href: "/docs/components/timeline-tier" },
       { title: "TimelineApprovalGate", href: "/docs/components/timeline-approval-gate" },
-      { title: "TimelineConnector", href: "/docs/components/timeline-connector", disabled: true },
-      { title: "TimelineSummary", href: "/docs/components/timeline-summary", disabled: true },
+      { title: "TimelineConnector", href: "/docs/components/timeline-connector" },
+      { title: "TimelineSummary", href: "/docs/components/timeline-summary" },
     ],
   },
   {
