@@ -1,0 +1,208 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { StandaloneTierDemo, MultiRegionTierDemo, CustomHeaderTierDemo } from "@/components/demos/StandaloneTier";
+
+# TimelineTier
+
+Groups multiple steps that execute in parallel. Renders them inside a bordered container with a header showing the tier label and a "N parallel" badge. Used by AgentTimeline when you pass the `tiers` prop, or standalone for custom layouts.
+
+<FeatureList
+  features={[
+    "Visual grouping for concurrent steps",
+    "Automatic parallel count badge",
+    "Custom header rendering",
+    "Passes through all TimelineStep props (click, elapsed, renderers)",
+    "Full classNames override support",
+    "Data attributes for tier targeting",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <StandaloneTierDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`// From the main package
+import { TimelineTier } from 'agent-native';
+
+// Or via the compound component
+import { AgentTimeline } from 'agent-native';
+// Use as AgentTimeline.Tier`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TimelineTier } from 'agent-native';
+import type { AgentStep, StepTier } from 'agent-native';
+
+const steps: AgentStep[] = [
+  { id: 'lint', label: 'ESLint', status: 'complete', description: '0 errors' },
+  { id: 'typecheck', label: 'TypeScript', status: 'complete' },
+  { id: 'test', label: 'Vitest', status: 'running', description: '47/52 passing' },
+];
+
+const tier: StepTier = {
+  id: 'checks',
+  label: 'CI Checks',
+  stepIds: ['lint', 'typecheck', 'test'],
+};
+
+function MyTier() {
+  return <TimelineTier tier={tier} steps={steps} />;
+}`}
+  lang="tsx"
+  filename="MyTier.tsx"
+/>
+
+<Callout variant="info">
+  The `steps` array should contain **all** steps. TimelineTier automatically filters to only render steps whose IDs are in `tier.stepIds`.
+</Callout>
+
+---
+
+## Examples
+
+### CI Pipeline
+
+A typical CI use case — lint, typecheck, and test running concurrently.
+
+<LiveDemo title="CI Checks">
+  <StandaloneTierDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const tier: StepTier = {
+  id: 'ci',
+  label: 'CI Checks',
+  stepIds: ['lint', 'typecheck', 'test'],
+};
+
+<TimelineTier tier={tier} steps={steps} />`}
+  lang="tsx"
+/>
+
+### With Elapsed Time
+
+Enable timers on parallel steps to show how long each has been running.
+
+<LiveDemo title="Multi-Region Deploy">
+  <MultiRegionTierDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const steps: AgentStep[] = [
+  { id: 'us-east', label: 'us-east-1', status: 'complete', startedAt: now - 8000, completedAt: now - 5000 },
+  { id: 'eu-west', label: 'eu-west-1', status: 'running', startedAt: now - 8000 },
+  { id: 'ap-south', label: 'ap-south-1', status: 'running', startedAt: now - 8000 },
+];
+
+const tier: StepTier = {
+  id: 'regions',
+  label: 'Multi-Region Deploy',
+  stepIds: ['us-east', 'eu-west', 'ap-south'],
+};
+
+<TimelineTier tier={tier} steps={steps} showElapsedTime />`}
+  lang="tsx"
+/>
+
+### Custom Header
+
+Replace the default header (label + badge) with your own component.
+
+<LiveDemo title="Custom Header">
+  <CustomHeaderTierDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<TimelineTier
+  tier={tier}
+  steps={steps}
+  renderTierHeader={(tier) => (
+    <div className="flex items-center gap-2 mb-2 px-1">
+      <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+      <span className="text-sm font-medium text-accent-foreground">
+        {tier.label}
+      </span>
+      <span className="text-xs text-muted-foreground">
+        — {tier.stepIds.length} tasks
+      </span>
+    </div>
+  )}
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Using with AgentTimeline
+
+Most commonly, you won't use TimelineTier directly — instead pass `tiers` to AgentTimeline:
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={allSteps}
+  tiers={[
+    { id: 'checks', label: 'Quality Checks', stepIds: ['lint', 'typecheck', 'test'] },
+    { id: 'deploy', label: 'Deployment', stepIds: ['us-east', 'eu-west'] },
+  ]}
+/>`}
+  lang="tsx"
+/>
+
+AgentTimeline handles the orchestration — it renders tiered steps inside `TimelineTier` and non-tiered steps as standalone `TimelineStep` components, with connectors between them.
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "tier", type: "StepTier", description: "Tier data: id, label, stepIds, optional timestamps" },
+    { name: "steps", type: "AgentStep[]", description: "Full steps array (filtered internally by tier.stepIds)" },
+    { name: "showElapsedTime", type: "boolean", description: "Pass through to child TimelineStep components" },
+    { name: "activeStepId", type: "string", description: "ID of the active step — matching steps get isActive=true" },
+    { name: "onStepClick", type: "(step: AgentStep) => void", description: "Click handler passed through to each step" },
+    { name: "classNames", type: "TimelineClassNames", description: "Class overrides for tier, tierHeader, step, indicator, stepBody" },
+    { name: "className", type: "string", description: "Additional class on the tier root element" },
+    { name: "renderStepContent", type: "(step: AgentStep) => ReactNode", description: "Custom step content renderer passed to child steps" },
+    { name: "renderStepIndicator", type: "(step: AgentStep) => ReactNode", description: "Custom step indicator renderer passed to child steps" },
+    { name: "renderTierHeader", type: "(tier: StepTier) => ReactNode", description: "Replace the default tier header" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-timeline__tier` | Root tier container (bordered, rounded, surface background) |
+| `an-timeline__tier-header` | Header row (flex, uppercase, small font) |
+| `an-timeline__tier-badge` | "N parallel" pill badge |
+
+## Data Attributes
+
+| Attribute | Element | Example |
+|-----------|---------|---------|
+| `data-tier-id` | Tier root | `"checks"` |
+
+## StepTier Type
+
+<CodeBlock
+  code={`interface StepTier {
+  id: string;         // Unique tier identifier
+  label?: string;     // Display label (shown in header)
+  stepIds: string[];  // IDs of steps in this tier
+  startedAt?: number; // Unix ms — when tier started
+  completedAt?: number; // Unix ms — when tier completed
+}`}
+  lang="typescript"
+/>

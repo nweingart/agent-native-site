@@ -1,0 +1,220 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { StandaloneApprovalDemo, MinimalApprovalDemo, StyledApprovalDemo } from "@/components/demos/StandaloneApproval";
+
+# TimelineApprovalGate
+
+A human-in-the-loop approval prompt. Renders a title, optional description, and Approve/Reject buttons. Used by AgentTimeline when you pass the `approvalRequest` prop, or standalone for custom approval flows.
+
+<FeatureList
+  features={[
+    "Approve and Reject actions with callback handlers",
+    "Optional description for context",
+    "Purple accent border and glow (approval status color)",
+    "Fade-in animation on mount",
+    "Buttons only render when handlers are provided",
+    "Full class override support for custom styling",
+    "Data attributes for targeting",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <StandaloneApprovalDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`// From the main package
+import { TimelineApprovalGate } from 'agent-native';
+
+// Or via the compound component
+import { AgentTimeline } from 'agent-native';
+// Use as AgentTimeline.ApprovalGate`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TimelineApprovalGate } from 'agent-native';
+import type { ApprovalRequest } from 'agent-native';
+
+const request: ApprovalRequest = {
+  id: 'gate-1',
+  stepId: 'deploy',
+  title: 'Deploy to production?',
+  description: '12 files changed, all tests passing.',
+  createdAt: Date.now(),
+};
+
+function MyApproval() {
+  return (
+    <TimelineApprovalGate
+      request={request}
+      onApprove={(req) => console.log('Approved:', req.id)}
+      onReject={(req) => console.log('Rejected:', req.id)}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyApproval.tsx"
+/>
+
+---
+
+## Examples
+
+### Interactive Approval
+
+Click Approve or Reject to see the result. The buttons only render when their handlers are provided.
+
+<LiveDemo title="Interactive Approval">
+  <StandaloneApprovalDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const [result, setResult] = useState<'pending' | 'approved' | 'rejected'>('pending');
+
+<TimelineApprovalGate
+  request={request}
+  onApprove={() => setResult('approved')}
+  onReject={() => setResult('rejected')}
+/>`}
+  lang="tsx"
+/>
+
+### Minimal (No Buttons)
+
+Without `onApprove`/`onReject`, the gate renders as a read-only prompt — useful for showing approval state in a history view.
+
+<LiveDemo title="Read-Only Approval">
+  <MinimalApprovalDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<TimelineApprovalGate
+  request={{
+    id: 'gate-2',
+    stepId: 'action',
+    title: 'Continue with file deletion?',
+    createdAt: Date.now(),
+  }}
+/>`}
+  lang="tsx"
+/>
+
+<Callout variant="tip">
+  This pattern is useful when rendering a timeline history where approvals have already been resolved. Show the gate without buttons to indicate what was approved.
+</Callout>
+
+### Custom Styling
+
+Override the container and button classes with Tailwind:
+
+<LiveDemo title="Styled Approval">
+  <StyledApprovalDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<TimelineApprovalGate
+  request={request}
+  onApprove={handleApprove}
+  onReject={handleReject}
+  className="rounded-xl border-accent/30 bg-accent/5"
+  approveButtonClassName="bg-accent hover:bg-accent/80 rounded-lg px-6"
+  rejectButtonClassName="bg-zinc-700 hover:bg-zinc-600 rounded-lg px-6"
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Using with AgentTimeline
+
+Typically you wire approval through AgentTimeline rather than using this component directly:
+
+<CodeBlock
+  code={`const [approval, setApproval] = useState<ApprovalRequest | undefined>({
+  id: 'gate-1',
+  stepId: 'review',
+  title: 'Apply changes?',
+  description: '3 files modified',
+  createdAt: Date.now(),
+});
+
+<AgentTimeline
+  steps={steps}
+  approvalRequest={approval}
+  onApprove={(req) => {
+    setApproval(undefined);
+    // Continue the workflow...
+  }}
+  onReject={(req) => {
+    setApproval(undefined);
+    // Cancel or rollback...
+  }}
+/>`}
+  lang="tsx"
+/>
+
+AgentTimeline renders the approval gate inline at the bottom of the timeline, below the last step.
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "request", type: "ApprovalRequest", description: "The approval request data to display" },
+    { name: "onApprove", type: "(req: ApprovalRequest) => void", description: "Approve button handler. Button only renders if provided." },
+    { name: "onReject", type: "(req: ApprovalRequest) => void", description: "Reject button handler. Button only renders if provided." },
+    { name: "className", type: "string", description: "Additional class on the approval gate root element" },
+    { name: "approveButtonClassName", type: "string", description: "Additional class on the Approve button" },
+    { name: "rejectButtonClassName", type: "string", description: "Additional class on the Reject button" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-timeline__approval` | Root container (purple border, approval background, fade-in) |
+| `an-timeline__approval-title` | Title text (bold, purple) |
+| `an-timeline__approval-description` | Description text (secondary color) |
+| `an-timeline__approval-actions` | Button row container |
+| `an-timeline__approval-btn` | Base button styles |
+| `an-timeline__approval-btn--approve` | Approve button (green background) |
+| `an-timeline__approval-btn--reject` | Reject button (red background) |
+
+## Data Attributes
+
+| Attribute | Element | Example |
+|-----------|---------|---------|
+| `data-approval-id` | Gate root | `"gate-1"` |
+
+## ApprovalRequest Type
+
+<CodeBlock
+  code={`interface ApprovalRequest {
+  id: string;           // Unique gate identifier
+  stepId: string;       // ID of the step this gate relates to
+  title: string;        // Prompt shown to the user
+  description?: string; // Additional context
+  toolCall?: ToolCall;  // Optional tool call details
+  createdAt: number;    // Unix ms
+  expiresAt?: number;   // Unix ms — optional expiry
+}`}
+  lang="typescript"
+/>
+
+## Accessibility
+
+- Approve and Reject are real `<button>` elements with visible labels
+- The gate container uses fade-in animation (respects `prefers-reduced-motion`)
+- Buttons are focusable and respond to Enter/Space
