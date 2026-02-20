@@ -142,11 +142,10 @@ async function runApprovalLoop(
   update("preview", { status: "complete", completedAt: Date.now(), description: "3 files, 247 lines changed" });
   await delay(300);
 
-  // Show approval gate
-  update("execute", { status: "waiting_approval", startedAt: Date.now() });
+  // Show approval gate (stepId points to the last completed step — gate renders after it)
   setApproval({
     id: "gate-1",
-    stepId: "execute",
+    stepId: "preview",
     title: "Apply refactoring changes?",
     description: "All checks passed. Ready to apply.",
     createdAt: Date.now(),
