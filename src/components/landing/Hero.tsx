@@ -57,10 +57,10 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right: Live demo — fixed height so it doesn't push content below */}
+          {/* Right: Live demo — fixed height viewport that follows the active step */}
           <div className="relative h-[540px]">
-            <div className="absolute inset-x-0 top-0 rounded-xl border border-border bg-surface p-6 shadow-2xl shadow-accent/5">
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-border">
+            <div className="absolute inset-0 rounded-xl border border-border bg-surface shadow-2xl shadow-accent/5 flex flex-col overflow-hidden">
+              <div className="flex items-center gap-2 px-6 pt-6 pb-4 mb-0 border-b border-border shrink-0">
                 <div className="h-3 w-3 rounded-full bg-red-500/60" />
                 <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
                 <div className="h-3 w-3 rounded-full bg-green-500/60" />
@@ -68,7 +68,11 @@ export function Hero() {
                   agent-workflow.tsx
                 </span>
               </div>
-              <HeroDemoTimeline />
+              <div className="relative flex-1 min-h-0">
+                <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-surface to-transparent z-10 pointer-events-none" />
+                <HeroDemoTimeline />
+                <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-surface to-transparent z-10 pointer-events-none" />
+              </div>
             </div>
           </div>
         </div>

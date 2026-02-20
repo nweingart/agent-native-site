@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
 import { AgentTimeline } from "agent-native";
 import type { AgentStep, StepTier, ApprovalRequest } from "agent-native";
 
@@ -146,12 +146,41 @@ export function HeroDemoTimeline() {
     };
   }, [updateStep]);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to the latest active element (running step or approval gate)
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    // Find the running/waiting step, or the approval gate
+    const target =
+      container.querySelector<HTMLElement>('[data-status="waiting_approval"]') ??
+      container.querySelector<HTMLElement>('[data-status="running"]') ??
+      container.querySelector<HTMLElement>('[data-approval-id]');
+
+    if (target) {
+      const containerRect = container.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const offset = targetRect.top - containerRect.top + container.scrollTop;
+      // Center the target in the viewport
+      const scrollTo = offset - container.clientHeight / 2 + targetRect.height / 2;
+      container.scrollTo({ top: Math.max(0, scrollTo), behavior: "smooth" });
+    }
+  }, [steps, approval]);
+
   return (
-    <AgentTimeline
-      steps={steps}
-      tiers={TIERS}
-      approvalRequest={approval}
-      showElapsedTime
-    />
+    <div
+      ref={scrollRef}
+      className="h-full overflow-y-auto px-6 pb-6"
+      style={{ scrollbarWidth: "none" }}
+    >
+      <AgentTimeline
+        steps={steps}
+        tiers={TIERS}
+        approvalRequest={approval}
+        showElapsedTime
+      />
+    </div>
   );
 }
