@@ -1,0 +1,144 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { Callout } from "@/components/mdx/Callout";
+import { AgentStreamDemo } from "@/components/demos/UseAgentStreamDemo";
+
+# useAgentStream
+
+Connects to an NDJSON event stream and drives an `AgentTimeline` automatically. Combines `useAgentSteps` with a streaming fetch, returning ready-to-spread `props` plus connection status and reconnection controls.
+
+## Preview
+
+<LiveDemo title="Connection Status">
+  <AgentStreamDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { useAgentStream } from 'agent-native';
+// or
+import { useAgentStream } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useAgentStream(options: UseAgentStreamOptions): UseAgentStreamReturn`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useAgentStream, AgentTimeline } from 'agent-native';
+
+function LiveAgentView() {
+  const { props, status, error } = useAgentStream({
+    url: '/api/agent/stream',
+    showElapsedTime: true,
+    showToolCalls: true,
+  });
+
+  return (
+    <div>
+      {status === 'error' && <p className="text-red-500">{error?.message}</p>}
+      <AgentTimeline {...props} />
+    </div>
+  );
+}`}
+  lang="tsx"
+  filename="LiveAgentView.tsx"
+/>
+
+---
+
+## Examples
+
+### With Auth Headers
+
+Pass authentication headers for protected endpoints.
+
+<CodeBlock
+  code={`const { props } = useAgentStream({
+  url: '/api/agent/stream',
+  headers: {
+    Authorization: \`Bearer \${token}\`,
+    'X-Request-Id': requestId,
+  },
+});`}
+  lang="tsx"
+/>
+
+### Conditional Streaming
+
+Enable or disable the stream connection based on application state.
+
+<CodeBlock
+  code={`const [isRunning, setIsRunning] = useState(false);
+
+const { props, status, disconnect, reconnect } = useAgentStream({
+  url: '/api/agent/stream',
+  enabled: isRunning,       // only connect when true
+  reconnect: true,          // auto-reconnect on disconnect
+  reconnectInterval: 3000,  // wait 3s between retries
+  maxReconnects: 5,         // give up after 5 attempts
+  onError: (err) => console.error('Stream error:', err),
+  onOpen: () => console.log('Connected'),
+  onClose: () => console.log('Disconnected'),
+});`}
+  lang="tsx"
+/>
+
+---
+
+## Options
+
+<PropsTable
+  props={[
+    { name: "url", type: "string", description: "NDJSON stream endpoint URL" },
+    { name: "headers", type: "Record<string, string>", description: "Additional headers for the fetch request" },
+    { name: "enabled", type: "boolean", default: "true", description: "Whether the stream should be active" },
+    { name: "reconnect", type: "boolean", default: "false", description: "Auto-reconnect when the connection drops" },
+    { name: "reconnectInterval", type: "number", default: "2000", description: "Milliseconds between reconnect attempts" },
+    { name: "maxReconnects", type: "number", default: "3", description: "Maximum number of reconnect attempts" },
+    { name: "onApprove", type: "(request: ApprovalRequest) => void", description: "Handler for approval gate approvals" },
+    { name: "onReject", type: "(request: ApprovalRequest) => void", description: "Handler for approval gate rejections" },
+    { name: "showElapsedTime", type: "boolean", description: "Include showElapsedTime in returned props" },
+    { name: "showToolCalls", type: "boolean", description: "Include showToolCalls in returned props" },
+    { name: "onError", type: "(error: Error) => void", description: "Called when the stream encounters an error" },
+    { name: "onOpen", type: "() => void", description: "Called when the stream connection opens" },
+    { name: "onClose", type: "() => void", description: "Called when the stream connection closes" },
+  ]}
+/>
+
+## Return Value
+
+<PropsTable
+  props={[
+    { name: "props", type: "AgentTimelineProps", description: "Ready-to-spread props for <AgentTimeline>" },
+    { name: "status", type: "StreamStatus", description: "'connecting' | 'open' | 'closed' | 'error'" },
+    { name: "error", type: "Error | null", description: "Latest connection error, if any" },
+    { name: "reconnectCount", type: "number", description: "Number of reconnection attempts so far" },
+    { name: "disconnect", type: "() => void", description: "Manually close the stream connection" },
+    { name: "reconnect", type: "() => void", description: "Manually trigger a reconnection" },
+  ]}
+/>
+
+## How It Works
+
+1. Opens a `fetch()` request with `ReadableStream` to the provided URL
+2. Reads NDJSON lines (newline-delimited JSON), parsing each as an `AgentEvent`
+3. Dispatches each event into `useAgentSteps` internally
+4. Returns the same `props` as `useAgentSteps`, plus connection status controls
+5. On disconnect, optionally retries based on `reconnect` / `maxReconnects` settings
+
+<Callout variant="info">
+  The stream endpoint must return newline-delimited JSON (NDJSON). Each line should be a valid `AgentEvent` object. Example: `{"type":"step.started","step":{"id":"1","label":"Scanning..."}}\n`
+</Callout>
+
+<Callout variant="tip">
+  For more control, use `useAgentSteps` directly and wire up your own transport (WebSocket, SSE, polling) to call `dispatch`.
+</Callout>

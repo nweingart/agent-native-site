@@ -1,4 +1,4 @@
-import type { AgentStep, StepTier, ApprovalRequest } from "agent-native";
+import type { AgentStep, StepTier, ApprovalRequest, ToolCall, Artifact } from "agent-native";
 
 const now = Date.now();
 
@@ -125,6 +125,110 @@ export const approvalRequest: ApprovalRequest = {
     "This will modify 3 files across the components directory. The changes include renaming props and updating type signatures.",
   createdAt: now - 3000,
 };
+
+export const toolCallSteps: AgentStep[] = [
+  {
+    id: "analyze",
+    label: "Analyzing codebase",
+    status: "complete",
+    description: "Identified 3 files to modify",
+    startedAt: now - 18000,
+    completedAt: now - 12000,
+    toolCalls: [
+      {
+        id: "tc-1",
+        name: "read_file",
+        input: { path: "src/utils/parser.ts" },
+        output: "File contents (247 lines)",
+        status: "complete",
+        startedAt: now - 17000,
+        completedAt: now - 15000,
+      },
+      {
+        id: "tc-2",
+        name: "search_files",
+        input: { pattern: "parseConfig", directory: "src/" },
+        output: "Found 4 matches across 3 files",
+        status: "complete",
+        startedAt: now - 15000,
+        completedAt: now - 13000,
+      },
+    ],
+    artifacts: [
+      {
+        id: "art-1",
+        kind: "code",
+        title: "parser.ts",
+        content: "export function parseConfig(raw: string): Config {\n  return JSON.parse(raw);\n}",
+        language: "typescript",
+      },
+    ],
+  },
+  {
+    id: "modify",
+    label: "Applying modifications",
+    status: "running",
+    description: "Editing source files...",
+    startedAt: now - 12000,
+    toolCalls: [
+      {
+        id: "tc-3",
+        name: "read_file",
+        input: { path: "src/config.ts" },
+        output: "File contents (89 lines)",
+        status: "complete",
+        startedAt: now - 11000,
+        completedAt: now - 10000,
+      },
+      {
+        id: "tc-4",
+        name: "edit_file",
+        input: { path: "src/config.ts", changes: "Update parseConfig call" },
+        status: "running",
+        startedAt: now - 9000,
+      },
+      {
+        id: "tc-5",
+        name: "run_tests",
+        input: { suite: "unit" },
+        status: "pending",
+      },
+    ],
+  },
+  {
+    id: "validate",
+    label: "Running validation",
+    status: "pending",
+  },
+];
+
+export const artifactExamples: Artifact[] = [
+  {
+    id: "art-code",
+    kind: "code",
+    title: "utils.ts",
+    content: "export const sum = (a: number, b: number) => a + b;",
+    language: "typescript",
+  },
+  {
+    id: "art-diff",
+    kind: "diff",
+    title: "config.ts",
+    content: "- const port = 3000;\n+ const port = process.env.PORT || 3000;",
+  },
+  {
+    id: "art-text",
+    kind: "text",
+    title: "Summary",
+    content: "Refactored 3 functions to use async/await pattern.",
+  },
+  {
+    id: "art-json",
+    kind: "json",
+    title: "package.json",
+    content: '{\n  "name": "my-app",\n  "version": "2.0.0"\n}',
+  },
+];
 
 export const elapsedSteps: AgentStep[] = [
   {

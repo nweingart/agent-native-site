@@ -163,8 +163,12 @@ Replace the default indicator or body content with your own components using `re
     { name: "className", type: "string", description: "Additional class on the root step element" },
     { name: "indicatorClassName", type: "string", description: "Additional class on the indicator circle" },
     { name: "bodyClassName", type: "string", description: "Additional class on the step body area" },
+    { name: "showToolCalls", type: "boolean", description: "Show tool calls nested within this step" },
+    { name: "defaultToolCallsExpanded", type: "boolean", description: "Start tool call details expanded" },
     { name: "renderContent", type: "(step: AgentStep) => ReactNode", description: "Replace the default step body rendering" },
     { name: "renderIndicator", type: "(step: AgentStep) => ReactNode", description: "Replace the default status indicator" },
+    { name: "renderToolContent", type: "(toolCall: ToolCall) => ReactNode", description: "Replace default tool call input/output display" },
+    { name: "renderArtifactContent", type: "(artifact: Artifact) => ReactNode", description: "Replace default artifact content display" },
   ]}
 />
 

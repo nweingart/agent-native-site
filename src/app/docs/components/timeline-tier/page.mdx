@@ -174,9 +174,13 @@ AgentTimeline handles the orchestration — it renders tiered steps inside `Time
     { name: "onStepClick", type: "(step: AgentStep) => void", description: "Click handler passed through to each step" },
     { name: "classNames", type: "TimelineClassNames", description: "Class overrides for tier, tierHeader, step, indicator, stepBody" },
     { name: "className", type: "string", description: "Additional class on the tier root element" },
+    { name: "showToolCalls", type: "boolean", description: "Show tool calls nested within tier steps" },
+    { name: "defaultToolCallsExpanded", type: "boolean", description: "Start tool call details expanded" },
     { name: "renderStepContent", type: "(step: AgentStep) => ReactNode", description: "Custom step content renderer passed to child steps" },
     { name: "renderStepIndicator", type: "(step: AgentStep) => ReactNode", description: "Custom step indicator renderer passed to child steps" },
     { name: "renderTierHeader", type: "(tier: StepTier) => ReactNode", description: "Replace the default tier header" },
+    { name: "renderToolContent", type: "(toolCall: ToolCall) => ReactNode", description: "Replace default tool call input/output display passed to child steps" },
+    { name: "renderArtifactContent", type: "(artifact: Artifact) => ReactNode", description: "Replace default artifact content display passed to child steps" },
   ]}
 />
 

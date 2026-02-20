@@ -1,0 +1,128 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { StandaloneArtifactDemo } from "@/components/demos/ArtifactDemo";
+
+# TimelineArtifact
+
+Renders a single artifact produced by an agent step — a file, code snippet, diff, or other output. Displays a kind badge and title, with expandable content. Used inside TimelineToolCallList to show step outputs.
+
+<FeatureList
+  features={[
+    "7 artifact kinds: code, file, diff, image, text, json, markdown",
+    "Kind badge with distinct styling per type",
+    "Expandable content panel",
+    "Custom content renderer for specialized display",
+    "Data attributes for CSS/JS targeting",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <StandaloneArtifactDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`// From the main package
+import { TimelineArtifact } from 'agent-native';
+
+// Or via the compound component
+import { AgentTimeline } from 'agent-native';
+// Use as AgentTimeline.Artifact`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TimelineArtifact } from 'agent-native';
+import type { Artifact } from 'agent-native';
+
+const artifact: Artifact = {
+  id: 'art-1',
+  kind: 'code',
+  title: 'utils.ts',
+  content: 'export const sum = (a: number, b: number) => a + b;',
+  language: 'typescript',
+};
+
+function MyArtifact() {
+  return <TimelineArtifact artifact={artifact} />;
+}`}
+  lang="tsx"
+  filename="MyArtifact.tsx"
+/>
+
+---
+
+## Examples
+
+### Different Kinds
+
+Each artifact kind gets a distinct badge color and icon treatment.
+
+<LiveDemo title="Artifact Kinds">
+  <StandaloneArtifactDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const artifacts: Artifact[] = [
+  { id: '1', kind: 'code', title: 'utils.ts', content: 'export const sum = ...', language: 'typescript' },
+  { id: '2', kind: 'diff', title: 'config.ts', content: '- port = 3000\\n+ port = 8080' },
+  { id: '3', kind: 'text', title: 'Summary', content: 'Refactored 3 functions.' },
+  { id: '4', kind: 'json', title: 'package.json', content: '{ "version": "2.0.0" }' },
+];
+
+artifacts.map(a => <TimelineArtifact key={a.id} artifact={a} />)`}
+  lang="tsx"
+/>
+
+### Custom Renderer
+
+Replace the default content display with syntax highlighting, a diff viewer, or any custom component.
+
+<CodeBlock
+  code={`<TimelineArtifact
+  artifact={artifact}
+  renderArtifactContent={(a) => (
+    <pre className="rounded bg-zinc-900 p-3 text-xs font-mono overflow-x-auto">
+      <code>{a.content}</code>
+    </pre>
+  )}
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "artifact", type: "Artifact", description: "The artifact data object to render" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "renderArtifactContent", type: "(artifact: Artifact) => ReactNode", description: "Replace the default content display" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-timeline__artifact` | Root artifact container |
+| `an-timeline__artifact-badge` | Kind badge pill |
+| `an-timeline__artifact-badge--{kind}` | Kind-specific badge styling (e.g. `--code`, `--diff`) |
+| `an-timeline__artifact-title` | Artifact title text |
+| `an-timeline__artifact-content` | Expandable content panel |
+
+## Data Attributes
+
+| Attribute | Element | Example |
+|-----------|---------|---------|
+| `data-artifact-id` | Artifact root | `"art-1"` |
+| `data-artifact-kind` | Artifact root | `"code"` |

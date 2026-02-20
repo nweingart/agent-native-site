@@ -28,6 +28,9 @@ export const docsNav: NavSection[] = [
       { title: "TimelineApprovalGate", href: "/docs/components/timeline-approval-gate" },
       { title: "TimelineConnector", href: "/docs/components/timeline-connector" },
       { title: "TimelineSummary", href: "/docs/components/timeline-summary" },
+      { title: "TimelineToolCall", href: "/docs/components/timeline-tool-call" },
+      { title: "TimelineToolCallList", href: "/docs/components/timeline-tool-call-list" },
+      { title: "TimelineArtifact", href: "/docs/components/timeline-artifact" },
     ],
   },
   {
@@ -37,6 +40,8 @@ export const docsNav: NavSection[] = [
       { title: "useAutoScroll", href: "/docs/hooks/use-auto-scroll" },
       { title: "useElapsedTime", href: "/docs/hooks/use-elapsed-time" },
       { title: "useReducedMotion", href: "/docs/hooks/use-reduced-motion" },
+      { title: "useAgentSteps", href: "/docs/hooks/use-agent-steps" },
+      { title: "useAgentStream", href: "/docs/hooks/use-agent-stream" },
     ],
   },
   {

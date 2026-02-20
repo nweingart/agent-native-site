@@ -1,0 +1,144 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { StandaloneToolCallDemo } from "@/components/demos/ToolCallDemo";
+
+# TimelineToolCall
+
+Renders a single tool call with its name, status indicator, and optional expandable input/output details. Used inside TimelineStep when `showToolCalls` is enabled.
+
+<FeatureList
+  features={[
+    "4 statuses: pending, running, complete, error",
+    "Expandable details panel with input/output",
+    "Live elapsed time on running tool calls",
+    "Custom content renderer for input/output display",
+    "Data attributes for CSS/JS targeting",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <StandaloneToolCallDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`// From the main package
+import { TimelineToolCall } from 'agent-native';
+
+// Or via the compound component
+import { AgentTimeline } from 'agent-native';
+// Use as AgentTimeline.ToolCall`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TimelineToolCall } from 'agent-native';
+import type { ToolCall } from 'agent-native';
+
+const toolCall: ToolCall = {
+  id: 'tc-1',
+  name: 'read_file',
+  input: { path: 'src/index.ts' },
+  output: 'File contents (42 lines)',
+  status: 'complete',
+  startedAt: Date.now() - 3000,
+  completedAt: Date.now(),
+};
+
+function MyToolCall() {
+  return <TimelineToolCall toolCall={toolCall} />;
+}`}
+  lang="tsx"
+  filename="MyToolCall.tsx"
+/>
+
+---
+
+## Examples
+
+### Status States
+
+Each status has a distinct visual treatment: a spinner for running, checkmark for complete, X for error, and a dot for pending.
+
+<LiveDemo title="Status States">
+  <StandaloneToolCallDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const toolCalls: ToolCall[] = [
+  { id: '1', name: 'read_file', input: { path: 'src/index.ts' }, status: 'complete', output: '42 lines' },
+  { id: '2', name: 'edit_file', input: { path: 'src/index.ts' }, status: 'running' },
+  { id: '3', name: 'run_tests', input: { suite: 'unit' }, status: 'pending' },
+  { id: '4', name: 'compile', input: {}, status: 'error', error: 'Type error' },
+];
+
+toolCalls.map(tc => <TimelineToolCall key={tc.id} toolCall={tc} />)`}
+  lang="tsx"
+/>
+
+### With Elapsed Time
+
+Show how long each tool call has been running or took to complete.
+
+<CodeBlock
+  code={`<TimelineToolCall toolCall={toolCall} showElapsedTime />`}
+  lang="tsx"
+/>
+
+### Custom Renderer
+
+Replace the default input/output display with your own component.
+
+<CodeBlock
+  code={`<TimelineToolCall
+  toolCall={toolCall}
+  renderToolContent={(tc) => (
+    <div className="rounded bg-zinc-900 p-2 text-xs font-mono">
+      <div className="text-zinc-400">{tc.name}({JSON.stringify(tc.input)})</div>
+      {tc.output && <div className="mt-1 text-green-400">→ {String(tc.output)}</div>}
+    </div>
+  )}
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "toolCall", type: "ToolCall", description: "The tool call data object to render" },
+    { name: "showElapsedTime", type: "boolean", description: "Show a live elapsed time counter" },
+    { name: "defaultExpanded", type: "boolean", description: "Start with the details panel expanded" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "renderToolContent", type: "(toolCall: ToolCall) => ReactNode", description: "Replace the default input/output display" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-timeline__tool-call` | Root tool call container |
+| `an-timeline__tool-call--{status}` | Status modifier (e.g. `--running`, `--complete`) |
+| `an-timeline__tool-call-name` | Tool name text |
+| `an-timeline__tool-call-elapsed` | Elapsed time counter |
+| `an-timeline__tool-call-details` | Expandable details panel |
+| `an-timeline__tool-call-error` | Error message text |
+
+## Data Attributes
+
+| Attribute | Element | Example |
+|-----------|---------|---------|
+| `data-tool-id` | Tool call root | `"tc-1"` |
+| `data-status` | Tool call root | `"running"` |
+| `data-tool-name` | Tool call root | `"read_file"` |

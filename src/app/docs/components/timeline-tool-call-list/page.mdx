@@ -1,0 +1,127 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { StandaloneToolCallListDemo } from "@/components/demos/ToolCallDemo";
+
+# TimelineToolCallList
+
+Renders a collapsible list of tool calls and artifacts for a step. Automatically expands when a tool call is in the `running` state. Used internally by TimelineStep when `showToolCalls` is enabled.
+
+<FeatureList
+  features={[
+    "Collapsible container with tool call count badge",
+    "Auto-expands when any tool call is running",
+    "Renders both tool calls and artifacts",
+    "Passes through custom renderers for tool content and artifacts",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <StandaloneToolCallListDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`// From the main package
+import { TimelineToolCallList } from 'agent-native';
+
+// Or via the compound component
+import { AgentTimeline } from 'agent-native';
+// Use as AgentTimeline.ToolCallList`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TimelineToolCallList } from 'agent-native';
+import type { ToolCall } from 'agent-native';
+
+const toolCalls: ToolCall[] = [
+  { id: 'tc-1', name: 'read_file', input: { path: 'src/app.ts' }, status: 'complete', output: '89 lines' },
+  { id: 'tc-2', name: 'edit_file', input: { path: 'src/app.ts' }, status: 'running' },
+];
+
+function MyToolCallList() {
+  return <TimelineToolCallList toolCalls={toolCalls} />;
+}`}
+  lang="tsx"
+  filename="MyToolCallList.tsx"
+/>
+
+---
+
+## Examples
+
+### Auto-Expand on Running
+
+The list automatically expands when any tool call has `status: 'running'`. No prop needed — it detects the status internally.
+
+<LiveDemo title="Auto-Expanding List">
+  <StandaloneToolCallListDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const toolCalls: ToolCall[] = [
+  { id: '1', name: 'read_file', input: {}, status: 'complete' },
+  { id: '2', name: 'edit_file', input: {}, status: 'running' },  // triggers auto-expand
+];
+
+<TimelineToolCallList toolCalls={toolCalls} />`}
+  lang="tsx"
+/>
+
+### With Artifacts
+
+Pass both `toolCalls` and `artifacts` to render them together. Artifacts appear below the tool calls.
+
+<CodeBlock
+  code={`import type { Artifact } from 'agent-native';
+
+const artifacts: Artifact[] = [
+  { id: 'a-1', kind: 'code', title: 'utils.ts', content: 'export const sum = (a, b) => a + b;', language: 'typescript' },
+  { id: 'a-2', kind: 'diff', title: 'config.ts', content: '- port = 3000\\n+ port = 8080' },
+];
+
+<TimelineToolCallList
+  toolCalls={toolCalls}
+  artifacts={artifacts}
+  defaultExpanded
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "toolCalls", type: "ToolCall[]", description: "Array of tool calls to render" },
+    { name: "artifacts", type: "Artifact[]", description: "Array of artifacts to render below tool calls" },
+    { name: "showElapsedTime", type: "boolean", description: "Pass through to child TimelineToolCall components" },
+    { name: "defaultExpanded", type: "boolean", description: "Start with the list expanded" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "renderToolContent", type: "(toolCall: ToolCall) => ReactNode", description: "Custom renderer passed to each TimelineToolCall" },
+    { name: "renderArtifactContent", type: "(artifact: Artifact) => ReactNode", description: "Custom renderer passed to each TimelineArtifact" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-timeline__tool-call-list` | Root container |
+| `an-timeline__tool-call-list--expanded` | Applied when expanded |
+| `an-timeline__tool-call-list-header` | Header row with count badge |
+| `an-timeline__tool-call-list-badge` | Tool call count pill |
+| `an-timeline__tool-call-list-body` | Collapsible content area |
+
+<Callout variant="tip">
+  In most cases you won't use TimelineToolCallList directly. Instead, pass `showToolCalls` to AgentTimeline or TimelineStep and the list is rendered automatically for any step that has `toolCalls` or `artifacts`.
+</Callout>

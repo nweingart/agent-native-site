@@ -1,0 +1,164 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { Callout } from "@/components/mdx/Callout";
+import { AgentStepsDemo } from "@/components/demos/UseAgentStepsDemo";
+
+# useAgentSteps
+
+A reducer-based hook that manages agent timeline state. Accepts `AgentEvent` dispatches and returns ready-to-spread `props` for `AgentTimeline`. Handles step creation, tool call tracking, tier management, and approval gates.
+
+## Preview
+
+<LiveDemo title="Interactive Dispatch">
+  <AgentStepsDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { useAgentSteps } from 'agent-native';
+// or
+import { useAgentSteps } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useAgentSteps(options?: UseAgentStepsOptions): UseAgentStepsReturn`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useAgentSteps, AgentTimeline } from 'agent-native';
+
+function AgentUI() {
+  const { props, dispatch } = useAgentSteps({
+    showElapsedTime: true,
+    showToolCalls: true,
+  });
+
+  // Dispatch events from your agent backend:
+  // dispatch({ type: 'step.started', step: { id: 'scan', label: 'Scanning...' } });
+  // dispatch({ type: 'step.completed', stepId: 'scan' });
+
+  return <AgentTimeline {...props} />;
+}`}
+  lang="tsx"
+  filename="AgentUI.tsx"
+/>
+
+---
+
+## Examples
+
+### Manual Dispatch
+
+Wire up buttons or WebSocket messages to dispatch events that build the timeline incrementally.
+
+<LiveDemo title="Manual Dispatch">
+  <AgentStepsDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const { props, dispatch, reset } = useAgentSteps({ showElapsedTime: true });
+
+// Start a step
+dispatch({ type: 'step.started', step: { id: 'analyze', label: 'Analyzing code' } });
+
+// Update a step
+dispatch({ type: 'step.updated', stepId: 'analyze', fields: { description: '47 files scanned' } });
+
+// Complete a step
+dispatch({ type: 'step.completed', stepId: 'analyze' });
+
+// Reset everything
+reset();`}
+  lang="tsx"
+/>
+
+### With Tool Calls
+
+Track tool calls within steps. The timeline shows tool calls nested inside their parent step.
+
+<CodeBlock
+  code={`const { props, dispatch } = useAgentSteps({ showToolCalls: true });
+
+// Start a step
+dispatch({ type: 'step.started', step: { id: 'edit', label: 'Editing files' } });
+
+// Start a tool call within the step
+dispatch({
+  type: 'tool.started',
+  stepId: 'edit',
+  toolCall: { id: 'tc-1', name: 'read_file', input: { path: 'src/app.ts' } },
+});
+
+// Complete the tool call
+dispatch({
+  type: 'tool.completed',
+  stepId: 'edit',
+  toolCallId: 'tc-1',
+  output: 'File contents (89 lines)',
+});`}
+  lang="tsx"
+/>
+
+---
+
+## Options
+
+<PropsTable
+  props={[
+    { name: "onApprove", type: "(request: ApprovalRequest) => void", description: "Handler passed to AgentTimeline when an approval gate is approved" },
+    { name: "onReject", type: "(request: ApprovalRequest) => void", description: "Handler passed to AgentTimeline when an approval gate is rejected" },
+    { name: "showElapsedTime", type: "boolean", description: "Include showElapsedTime in returned props" },
+    { name: "showToolCalls", type: "boolean", description: "Include showToolCalls in returned props" },
+  ]}
+/>
+
+## Return Value
+
+<PropsTable
+  props={[
+    { name: "steps", type: "AgentStep[]", description: "Current array of steps" },
+    { name: "tiers", type: "StepTier[]", description: "Current array of tiers" },
+    { name: "approvalRequest", type: "ApprovalRequest | undefined", description: "Active approval request, if any" },
+    { name: "dispatch", type: "(event: AgentEvent) => void", description: "Dispatch an agent event to update state" },
+    { name: "props", type: "AgentTimelineProps", description: "Ready-to-spread props for <AgentTimeline>" },
+    { name: "reset", type: "() => void", description: "Clear all state (steps, tiers, approvals)" },
+  ]}
+/>
+
+## How It Works
+
+1. Internally uses `useReducer` with an `AgentEvent` discriminated union
+2. Each event type maps to a specific state transition (e.g. `step.started` pushes a new step with `status: 'running'`)
+3. The `props` object is memoized and includes `steps`, `tiers`, `approvalRequest`, plus any options passed in
+4. Timestamps (`startedAt`, `completedAt`) are set automatically when not provided
+
+## AgentEvent Types
+
+<CodeBlock
+  code={`type AgentEvent =
+  | { type: 'step.started';  step: Pick<AgentStep, 'id' | 'label'> & Partial<AgentStep> }
+  | { type: 'step.updated';  stepId: string; fields: Partial<AgentStep> }
+  | { type: 'step.completed'; stepId: string; status?: 'complete' | 'error' | 'skipped' | 'cancelled'; error?: string }
+  | { type: 'tool.started';  stepId: string; toolCall: Pick<ToolCall, 'id' | 'name' | 'input'> }
+  | { type: 'tool.updated';  stepId: string; toolCallId: string; fields: Partial<ToolCall> }
+  | { type: 'tool.completed'; stepId: string; toolCallId: string; output?: unknown; error?: string }
+  | { type: 'tier.started';  tier: Pick<StepTier, 'id' | 'stepIds'> & Partial<StepTier> }
+  | { type: 'tier.completed'; tierId: string }
+  | { type: 'approval.requested'; request: ApprovalRequest }
+  | { type: 'approval.resolved'; requestId: string; decision: 'approved' | 'rejected' }
+  | { type: 'artifact.added'; stepId: string; artifact: Artifact }
+  | { type: 'reset' };`}
+  lang="typescript"
+/>
+
+<Callout variant="tip">
+  Pair `useAgentSteps` with `useAgentStream` to automatically dispatch events from an NDJSON stream — or call `dispatch` manually from your own WebSocket/SSE handler.
+</Callout>

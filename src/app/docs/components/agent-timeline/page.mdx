@@ -9,6 +9,7 @@ import { TimelineWithTiers } from "@/components/demos/TimelineWithTiers";
 import { TimelineWithApproval } from "@/components/demos/TimelineWithApproval";
 import { TimelineWithElapsed } from "@/components/demos/TimelineWithElapsed";
 import { TimelineTailwind } from "@/components/demos/TimelineTailwind";
+import { TimelineWithToolCalls } from "@/components/demos/ToolCallDemo";
 
 # AgentTimeline
 
@@ -144,6 +145,23 @@ Show live counters on running steps. Timers freeze when `completedAt` is set.
   lang="tsx"
 />
 
+### Tool Calls
+
+Show tool calls nested within each step. The list auto-expands for running steps.
+
+<LiveDemo title="Tool Calls">
+  <TimelineWithToolCalls />
+</LiveDemo>
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}   // steps with toolCalls[] and artifacts[]
+  showToolCalls
+  showElapsedTime
+/>`}
+  lang="tsx"
+/>
+
 ### Tailwind Styling
 
 Override every element with Tailwind classes via the `classNames` prop:
@@ -209,9 +227,13 @@ Replace the default step body or status indicator with your own renderers:
     { name: "showElapsedTime", type: "boolean", description: "Shows live timers on running/completed steps" },
     { name: "showConnectors", type: "boolean", default: "true", description: "Vertical lines between steps" },
     { name: "autoScroll", type: "boolean", default: "true", description: "Keeps latest step scrolled into view" },
+    { name: "showToolCalls", type: "boolean", description: "Show tool calls nested within steps" },
+    { name: "defaultToolCallsExpanded", type: "boolean", description: "Start tool call details expanded" },
     { name: "renderStepContent", type: "(step: AgentStep) => ReactNode", description: "Replace default step body rendering" },
     { name: "renderStepIndicator", type: "(step: AgentStep) => ReactNode", description: "Replace default status indicator" },
     { name: "renderTierHeader", type: "(tier: StepTier) => ReactNode", description: "Replace default tier header" },
+    { name: "renderToolContent", type: "(toolCall: ToolCall) => ReactNode", description: "Replace default tool call input/output display" },
+    { name: "renderArtifactContent", type: "(artifact: Artifact) => ReactNode", description: "Replace default artifact content display" },
     { name: "classNames", type: "TimelineClassNames", description: "Class overrides for every internal element" },
     { name: "className", type: "string", description: "Shorthand for classNames.root" },
     { name: "stepClassName", type: "string", description: "Shorthand for classNames.step" },
@@ -232,6 +254,9 @@ Replace the default step body or status indicator with your own renderers:
     { key: "approval", target: "Approval gate box" },
     { key: "approveButton", target: "The Approve button" },
     { key: "rejectButton", target: "The Reject button" },
+    { key: "toolCall", target: "Individual tool call row" },
+    { key: "toolCallList", target: "Tool call list container" },
+    { key: "artifact", target: "Artifact row" },
   ]}
 />
 
@@ -246,6 +271,9 @@ Replace the default step body or status indicator with your own renderers:
 | `TimelineTier` | `AgentTimeline.Tier` | Parallel execution group |
 | `TimelineApprovalGate` | `AgentTimeline.ApprovalGate` | Approval prompt |
 | `TimelineSummary` | `AgentTimeline.Summary` | Status count badges |
+| `TimelineToolCall` | `AgentTimeline.ToolCall` | Individual tool call row |
+| `TimelineToolCallList` | `AgentTimeline.ToolCallList` | Collapsible tool call list |
+| `TimelineArtifact` | `AgentTimeline.Artifact` | Artifact output display |
 
 ## Data Attributes
 
