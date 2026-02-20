@@ -38,7 +38,7 @@ export function Tabs({
             className={clsx(
               "px-3 py-2 text-sm font-medium transition-colors -mb-px",
               active === tab.value
-                ? "text-accent border-b-2 border-accent"
+                ? "text-foreground border-b-2 border-foreground"
                 : "text-muted hover:text-foreground"
             )}
           >

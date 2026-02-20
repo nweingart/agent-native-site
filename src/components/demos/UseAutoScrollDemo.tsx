@@ -57,7 +57,7 @@ export function AutoScrollBasicDemo() {
       <div className="flex gap-3">
         <button
           onClick={addItem}
-          className="text-sm px-4 py-2 rounded-md bg-accent text-white hover:bg-accent/80 transition-colors"
+          className="text-sm px-4 py-2 rounded-md bg-foreground text-background hover:bg-foreground/80 transition-colors"
         >
           Add item
         </button>

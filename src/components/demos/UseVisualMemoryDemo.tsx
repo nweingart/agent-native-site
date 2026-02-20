@@ -45,7 +45,7 @@ export function VisualMemoryBasicDemo() {
         <div className="text-xs text-muted-foreground mb-2">Transition Progress</div>
         <div className="h-3 rounded-full bg-surface-3 overflow-hidden">
           <div
-            className="h-full bg-accent rounded-full transition-all duration-75"
+            className="h-full bg-foreground rounded-full transition-all duration-75"
             style={{ width: `${memory.progress * 100}%` }}
           />
         </div>
@@ -58,7 +58,7 @@ export function VisualMemoryBasicDemo() {
 
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground">isTransitioning:</span>
-        <span className={`text-xs font-mono ${memory.isTransitioning ? "text-accent" : "text-muted-foreground"}`}>
+        <span className={`text-xs font-mono ${memory.isTransitioning ? "text-foreground" : "text-muted-foreground"}`}>
           {String(memory.isTransitioning)}
         </span>
       </div>
@@ -70,7 +70,7 @@ export function VisualMemoryBasicDemo() {
             onClick={() => setStatus(s)}
             className={`text-sm px-3 py-1.5 rounded-md border transition-colors ${
               status === s
-                ? "border-accent bg-accent/10 text-accent"
+                ? "border-foreground bg-foreground/10 text-foreground"
                 : "border-border text-muted hover:text-foreground"
             }`}
           >
@@ -102,7 +102,7 @@ export function VisualMemoryEasingDemo() {
           </div>
           <div className="h-2 rounded-full bg-surface-3 overflow-hidden">
             <div
-              className="h-full bg-accent rounded-full transition-none"
+              className="h-full bg-foreground rounded-full transition-none"
               style={{ width: `${state.progress * 100}%` }}
             />
           </div>
@@ -110,7 +110,7 @@ export function VisualMemoryEasingDemo() {
       ))}
       <button
         onClick={() => setValue((v) => v + 1)}
-        className="text-sm px-4 py-2 rounded-md bg-accent text-white hover:bg-accent/80 transition-colors"
+        className="text-sm px-4 py-2 rounded-md bg-foreground text-background hover:bg-foreground/80 transition-colors"
       >
         Trigger transition
       </button>

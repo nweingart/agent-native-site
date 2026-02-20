@@ -238,7 +238,7 @@ export function HeroTabbedDemo() {
             className={clsx(
               "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
               activeTab === tab.id
-                ? "bg-accent text-white"
+                ? "bg-surface-2 text-foreground"
                 : "text-muted hover:text-foreground hover:bg-surface",
             )}
           >

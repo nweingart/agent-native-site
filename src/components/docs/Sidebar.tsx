@@ -15,7 +15,7 @@ export function Sidebar() {
     <nav className="space-y-6 py-6 px-4">
       <Link
         href="/"
-        className="block text-sm font-semibold text-foreground mb-6 hover:text-accent transition-colors"
+        className="block text-sm font-semibold text-foreground mb-6 hover:text-muted transition-colors"
       >
         agent-native
       </Link>
@@ -43,7 +43,7 @@ export function Sidebar() {
                       className={clsx(
                         "block rounded-md px-2 py-1.5 text-sm transition-colors",
                         isActive
-                          ? "bg-accent/10 text-accent font-medium"
+                          ? "bg-surface-2 text-foreground font-medium"
                           : "text-muted hover:text-foreground hover:bg-surface-2"
                       )}
                     >

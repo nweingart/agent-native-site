@@ -70,7 +70,7 @@ export function SummaryInteractiveDemo() {
         <button
           onClick={advance}
           disabled={allDone}
-          className="text-sm px-3 py-1.5 rounded-md bg-accent text-white hover:bg-accent/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="text-sm px-3 py-1.5 rounded-md bg-foreground text-background hover:bg-foreground/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Advance step
         </button>

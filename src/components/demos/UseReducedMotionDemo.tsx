@@ -10,7 +10,7 @@ export function ReducedMotionDemo() {
       <div className="flex items-center gap-4 p-4 rounded-lg bg-surface-2">
         <div
           className={`h-10 w-10 rounded-full ${
-            prefersReduced ? "bg-yellow-500" : "bg-accent"
+            prefersReduced ? "bg-yellow-500" : "bg-zinc-400"
           } flex items-center justify-center`}
         >
           {prefersReduced ? (
