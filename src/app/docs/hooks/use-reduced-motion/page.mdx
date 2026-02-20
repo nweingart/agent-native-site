@@ -1,0 +1,131 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { Callout } from "@/components/mdx/Callout";
+import { ReducedMotionDemo } from "@/components/demos/UseReducedMotionDemo";
+
+# useReducedMotion
+
+Returns `true` when the user has `prefers-reduced-motion: reduce` enabled. Reactive — updates instantly if the preference changes at runtime. SSR-safe.
+
+## Preview
+
+<LiveDemo title="Motion Preference Detection">
+  <ReducedMotionDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { useReducedMotion } from 'agent-native';
+// or
+import { useReducedMotion } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useReducedMotion(): boolean`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useReducedMotion } from 'agent-native';
+
+function AnimatedIcon({ status }) {
+  const prefersReduced = useReducedMotion();
+
+  if (status === 'running') {
+    return prefersReduced
+      ? <PulsingDot />    // Gentle opacity pulse
+      : <SpinningIcon />; // Full rotation animation
+  }
+
+  return <StaticIcon status={status} />;
+}`}
+  lang="tsx"
+  filename="AnimatedIcon.tsx"
+/>
+
+---
+
+## Examples
+
+### Motion Preference Detection
+
+The demo below reads your system's motion preference in real time.
+
+<LiveDemo title="System Preference">
+  <ReducedMotionDemo />
+</LiveDemo>
+
+<Callout variant="info">
+  To test this, toggle &ldquo;Reduce motion&rdquo; in your OS accessibility settings. On macOS: System Settings → Accessibility → Display → Reduce motion. The value updates instantly without a page reload.
+</Callout>
+
+### Conditional Animation
+
+<CodeBlock
+  code={`const prefersReduced = useReducedMotion();
+
+<div
+  className={prefersReduced ? 'animate-pulse' : 'animate-spin'}
+  // Reduced: gentle opacity pulse
+  // Normal: full rotation
+/>`}
+  lang="tsx"
+/>
+
+### Disabling Transitions
+
+<CodeBlock
+  code={`const prefersReduced = useReducedMotion();
+
+<div
+  style={{
+    transition: prefersReduced ? 'none' : 'all 300ms ease-out',
+  }}
+/>`}
+  lang="tsx"
+/>
+
+### With useVisualMemory
+
+`useVisualMemory` automatically respects reduced motion — but you can also combine them:
+
+<CodeBlock
+  code={`const prefersReduced = useReducedMotion();
+const memory = useVisualMemory(status, {
+  animate: !prefersReduced,  // redundant — useVisualMemory does this internally
+  duration: prefersReduced ? 0 : 300,
+});`}
+  lang="tsx"
+/>
+
+---
+
+## Return Value
+
+Returns a `boolean`:
+- `true` — user prefers reduced motion
+- `false` — no preference (default, and SSR fallback)
+
+## How It Works
+
+1. On mount, queries `window.matchMedia('(prefers-reduced-motion: reduce)')`
+2. Reads the initial `.matches` value
+3. Attaches a `change` event listener that updates state reactively
+4. Returns `false` during SSR (no `window` available)
+5. Cleans up the listener on unmount
+
+## Internal Usage
+
+agent-native uses this hook in two places:
+
+- **TimelineStep** — swaps `an-spin` (rotation) for `an-pulse` (opacity) on the running indicator
+- **useVisualMemory** — skips animation entirely, jumping `progress` straight to 1
+
+This means the entire library automatically respects the user's motion preferences with zero configuration.

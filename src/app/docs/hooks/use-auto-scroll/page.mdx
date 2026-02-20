@@ -1,0 +1,137 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { Callout } from "@/components/mdx/Callout";
+import { AutoScrollBasicDemo } from "@/components/demos/UseAutoScrollDemo";
+
+# useAutoScroll
+
+Returns a ref for a scrollable container. Automatically scrolls to the bottom when the trigger value changes — but backs off when the user scrolls up, and re-engages when they scroll back down. Used internally by AgentTimeline for its `autoScroll` prop.
+
+## Preview
+
+<LiveDemo title="Auto-Scroll Container">
+  <AutoScrollBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { useAutoScroll } from 'agent-native';
+// or
+import { useAutoScroll } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useAutoScroll<T extends HTMLElement = HTMLDivElement>(
+  trigger: unknown,
+  options?: AutoScrollOptions
+): RefObject<T>`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useAutoScroll } from 'agent-native';
+
+function LogViewer({ logs }) {
+  const scrollRef = useAutoScroll<HTMLDivElement>(logs.length);
+
+  return (
+    <div ref={scrollRef} className="h-64 overflow-y-auto">
+      {logs.map((log, i) => (
+        <div key={i}>{log}</div>
+      ))}
+    </div>
+  );
+}`}
+  lang="tsx"
+  filename="LogViewer.tsx"
+/>
+
+---
+
+## Examples
+
+### Interactive Demo
+
+Add items and watch the container auto-scroll. Scroll up manually to disengage, then scroll back to the bottom to re-engage.
+
+<LiveDemo title="Auto-Scroll">
+  <AutoScrollBasicDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const [items, setItems] = useState(['Step 1', 'Step 2', 'Step 3']);
+const scrollRef = useAutoScroll<HTMLDivElement>(items.length);
+
+<div ref={scrollRef} className="h-48 overflow-y-auto">
+  {items.map((item, i) => (
+    <div key={i}>{item}</div>
+  ))}
+</div>
+
+<button onClick={() => setItems(prev => [...prev, \`Step \${prev.length + 1}\`])}>
+  Add item
+</button>`}
+  lang="tsx"
+/>
+
+### With AgentTimeline
+
+You don't need to use this hook directly — AgentTimeline has it built in:
+
+<CodeBlock
+  code={`// Auto-scroll is on by default
+<AgentTimeline steps={steps} />
+
+// Disable it
+<AgentTimeline steps={steps} autoScroll={false} />`}
+  lang="tsx"
+/>
+
+### Custom Scroll Behavior
+
+<CodeBlock
+  code={`// Instant scroll (no smooth animation)
+const ref = useAutoScroll(trigger, { behavior: 'instant' });
+
+// Larger threshold — user must scroll further to disengage
+const ref = useAutoScroll(trigger, { threshold: 100 });
+
+// Disable temporarily
+const ref = useAutoScroll(trigger, { enabled: isFollowing });`}
+  lang="tsx"
+/>
+
+---
+
+## Options
+
+<PropsTable
+  props={[
+    { name: "enabled", type: "boolean", default: "true", description: "Master on/off switch for auto-scrolling" },
+    { name: "behavior", type: "ScrollBehavior", default: "'smooth'", description: "Native scroll behavior — 'smooth' or 'instant'" },
+    { name: "threshold", type: "number", default: "50", description: "Pixels from the bottom that still counts as \"at the bottom\"" },
+  ]}
+/>
+
+## Return Value
+
+Returns a `RefObject<T>` — attach it to your scrollable container element.
+
+## Behavior
+
+1. When `trigger` changes, the hook checks if the container is scrolled within `threshold` pixels of the bottom
+2. If yes, it calls `scrollTo({ top: scrollHeight, behavior })` to scroll to the new content
+3. If the user has scrolled up past the threshold, auto-scroll disengages
+4. When the user scrolls back within `threshold` of the bottom, auto-scroll re-engages
+5. Uses a scroll event listener (passive) to track the user's scroll position
+
+<Callout variant="tip">
+  The `trigger` parameter accepts `unknown` — typically you'd pass `items.length`, `steps.length`, or any value that changes when new content appears. The hook doesn't inspect the value, just detects changes via `useEffect`.
+</Callout>

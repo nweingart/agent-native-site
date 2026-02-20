@@ -1,0 +1,131 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { Callout } from "@/components/mdx/Callout";
+import { VisualMemoryBasicDemo, VisualMemoryEasingDemo } from "@/components/demos/UseVisualMemoryDemo";
+
+# useVisualMemory
+
+Tracks value transitions and exposes animated progress so your UI can blend between states. Used internally by TimelineStep to smoothly morph status indicators (spinner to checkmark, dot to spinner, etc.).
+
+## Preview
+
+<LiveDemo title="Status Transitions">
+  <VisualMemoryBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { useVisualMemory } from 'agent-native';
+// or
+import { useVisualMemory } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useVisualMemory<T>(
+  value: T,
+  options?: VisualMemoryOptions
+): VisualMemoryState<T>`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useVisualMemory } from 'agent-native';
+
+function StatusIndicator({ status }) {
+  const { current, previous, progress, isTransitioning } = useVisualMemory(status);
+
+  return (
+    <div style={{ opacity: progress }}>
+      {current === 'complete' ? '✓' : current === 'running' ? '⟳' : '○'}
+    </div>
+  );
+}`}
+  lang="tsx"
+  filename="StatusIndicator.tsx"
+/>
+
+---
+
+## Examples
+
+### Status Transitions
+
+Click the buttons to change status and watch the transition progress animate from 0 to 1.
+
+<LiveDemo title="Interactive Transitions">
+  <VisualMemoryBasicDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const [status, setStatus] = useState('pending');
+const memory = useVisualMemory(status);
+
+// memory.current    — "running"
+// memory.previous   — "pending"
+// memory.progress   — 0.0 → 1.0 (animated)
+// memory.isTransitioning — true while animating`}
+  lang="tsx"
+/>
+
+### Easing Comparison
+
+Compare how different easing functions affect transition curves.
+
+<LiveDemo title="Easing Functions">
+  <VisualMemoryEasingDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const linear = useVisualMemory(value, { easing: 'linear', duration: 1000 });
+const easeOut = useVisualMemory(value, { easing: 'ease-out', duration: 1000 });
+const spring  = useVisualMemory(value, { easing: 'spring', duration: 1000 });`}
+  lang="tsx"
+/>
+
+---
+
+## Options
+
+<PropsTable
+  props={[
+    { name: "duration", type: "number", default: "300", description: "Transition duration in milliseconds" },
+    { name: "easing", type: "'ease-out' | 'ease-in' | 'ease-in-out' | 'linear' | 'spring'", default: "'ease-out'", description: "Easing curve for the progress animation" },
+    { name: "animate", type: "boolean", default: "true", description: "Set false to disable. Also auto-disabled when prefers-reduced-motion is set." },
+  ]}
+/>
+
+## Return Value
+
+<PropsTable
+  props={[
+    { name: "current", type: "T", description: "The current (latest) value" },
+    { name: "previous", type: "T | null", description: "The previous value. null on first render." },
+    { name: "progress", type: "number", description: "Transition progress from 0 to 1" },
+    { name: "isTransitioning", type: "boolean", description: "true while a transition is in progress" },
+  ]}
+/>
+
+## How It Works
+
+1. When `value` changes, the hook stores the old value as `previous` and starts a `requestAnimationFrame` loop
+2. Each frame, it calculates elapsed time and applies the easing function to produce `progress` (0 to 1)
+3. When `progress` reaches 1, `isTransitioning` becomes `false`
+4. All easing functions are pure math — no CSS transitions, no spring physics libraries
+
+<Callout variant="info">
+  When `prefers-reduced-motion: reduce` is detected, the hook automatically skips animation — `progress` jumps to 1 immediately and `isTransitioning` stays `false`.
+</Callout>
+
+## Use Cases
+
+- **Status indicator morphing** — blend between spinner, checkmark, and error icons
+- **Color transitions** — interpolate between status colors using `progress`
+- **Content crossfades** — fade out old content, fade in new content based on `progress`
+- **Custom step animations** — use `previous` and `current` to determine transition direction

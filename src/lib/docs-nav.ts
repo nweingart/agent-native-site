@@ -33,10 +33,10 @@ export const docsNav: NavSection[] = [
   {
     title: "Hooks",
     items: [
-      { title: "useVisualMemory", href: "/docs/hooks/use-visual-memory", disabled: true },
-      { title: "useAutoScroll", href: "/docs/hooks/use-auto-scroll", disabled: true },
-      { title: "useElapsedTime", href: "/docs/hooks/use-elapsed-time", disabled: true },
-      { title: "useReducedMotion", href: "/docs/hooks/use-reduced-motion", disabled: true },
+      { title: "useVisualMemory", href: "/docs/hooks/use-visual-memory" },
+      { title: "useAutoScroll", href: "/docs/hooks/use-auto-scroll" },
+      { title: "useElapsedTime", href: "/docs/hooks/use-elapsed-time" },
+      { title: "useReducedMotion", href: "/docs/hooks/use-reduced-motion" },
     ],
   },
   {

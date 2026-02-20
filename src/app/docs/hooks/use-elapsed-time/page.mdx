@@ -1,0 +1,123 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { Callout } from "@/components/mdx/Callout";
+import { ElapsedTimeBasicDemo, ElapsedTimeMultipleDemo } from "@/components/demos/UseElapsedTimeDemo";
+
+# useElapsedTime
+
+Returns a live-updating formatted time string. Counts up while running and freezes when completed. Used internally by TimelineStep for elapsed time display.
+
+## Preview
+
+<LiveDemo title="Interactive Timer">
+  <ElapsedTimeBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { useElapsedTime } from 'agent-native';
+// or
+import { useElapsedTime } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useElapsedTime(
+  startedAt: number | undefined,
+  completedAt?: number | undefined,
+  interval?: number   // default: 1000ms
+): string`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useElapsedTime } from 'agent-native';
+
+function TaskTimer({ startedAt, completedAt }) {
+  const elapsed = useElapsedTime(startedAt, completedAt);
+
+  return <span className="font-mono">{elapsed}</span>;
+}`}
+  lang="tsx"
+  filename="TaskTimer.tsx"
+/>
+
+---
+
+## Examples
+
+### Interactive Timer
+
+Start, stop, and reset to see the formatted output update.
+
+<LiveDemo title="Start/Stop Timer">
+  <ElapsedTimeBasicDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const [startedAt, setStartedAt] = useState<number | undefined>();
+const [completedAt, setCompletedAt] = useState<number | undefined>();
+const elapsed = useElapsedTime(startedAt, completedAt);
+
+// Start: setStartedAt(Date.now())
+// Stop:  setCompletedAt(Date.now())
+// Reset: setStartedAt(undefined); setCompletedAt(undefined)`}
+  lang="tsx"
+/>
+
+### Multiple Timers
+
+Each timer runs independently. Completed timers show a frozen value.
+
+<LiveDemo title="Multiple Timers">
+  <ElapsedTimeMultipleDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`const elapsed1 = useElapsedTime(now - 5000, now - 2000);   // "3s" (frozen)
+const elapsed2 = useElapsedTime(now - 45000, now - 3000);  // "42s" (frozen)
+const elapsed3 = useElapsedTime(now - 120000);              // "2m 0s" (ticking)`}
+  lang="tsx"
+/>
+
+---
+
+## Output Format
+
+| Duration | Output |
+|----------|--------|
+| No `startedAt` | `"0s"` |
+| Under 1 minute | `"Xs"` (e.g. `"42s"`) |
+| Under 1 hour | `"Xm Ys"` (e.g. `"3m 12s"`) |
+| 1 hour+ | `"Xh Ym Zs"` (e.g. `"1h 5m 30s"`) |
+
+## Parameters
+
+<PropsTable
+  props={[
+    { name: "startedAt", type: "number | undefined", description: "Unix timestamp (ms) when the timer started. Returns \"0s\" when undefined." },
+    { name: "completedAt", type: "number | undefined", description: "Unix timestamp (ms) when the timer stopped. Freezes the display when set." },
+    { name: "interval", type: "number", default: "1000", description: "Update interval in milliseconds." },
+  ]}
+/>
+
+## Return Value
+
+Returns a `string` — the formatted elapsed time. Updates every `interval` ms while running.
+
+## Behavior
+
+- Returns `"0s"` when `startedAt` is `undefined`
+- Starts a `setInterval` that re-renders every `interval` ms
+- When `completedAt` is provided, calculates the difference between `completedAt` and `startedAt` (no interval)
+- Cleans up the interval on unmount or when `completedAt` is set
+
+<Callout variant="tip">
+  Use this with `AgentStep.startedAt` and `AgentStep.completedAt` timestamps. Or pass `showElapsedTime` to AgentTimeline and let it handle the wiring automatically.
+</Callout>
