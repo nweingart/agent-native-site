@@ -1,0 +1,137 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+import { StreamingTextBasicDemo, StreamingTextCursorDemo, StreamingTextTypingSpeedDemo } from "@/components/demos/StreamingTextDemo";
+
+# StreamingText
+
+Token-by-token text renderer with a blinking cursor. Shows LLM output as it arrives, with optional simulated typing animation for demos.
+
+<FeatureList
+  features={[
+    "Instant display or simulated typing via typingSpeed prop",
+    "Three cursor styles: line, block, underscore",
+    "Cursor auto-hides when streaming stops",
+    "onStreamEnd callback fires when done",
+    "Accessible: role=\"log\", aria-live=\"polite\"",
+    "Reduced motion: solid cursor, no blink",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <StreamingTextBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { StreamingText } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { StreamingText } from 'agent-native';
+
+function MyChat() {
+  const [content, setContent] = useState('');
+  const [isStreaming, setIsStreaming] = useState(true);
+
+  // content grows as tokens arrive from your LLM
+  return (
+    <StreamingText
+      content={content}
+      isStreaming={isStreaming}
+      onStreamEnd={() => console.log('Done!')}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyChat.tsx"
+/>
+
+---
+
+## Examples
+
+### Cursor Styles
+
+Three built-in cursor appearances. The default is `line`.
+
+<LiveDemo title="Cursor Styles">
+  <StreamingTextCursorDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<StreamingText content="Hello" isStreaming cursorStyle="line" />
+<StreamingText content="Hello" isStreaming cursorStyle="block" />
+<StreamingText content="Hello" isStreaming cursorStyle="underscore" />`}
+  lang="tsx"
+/>
+
+### Simulated Typing
+
+Set `typingSpeed` (chars/sec) for a typewriter effect. Useful for demos where content is available all at once but you want to animate it.
+
+<LiveDemo title="Typing Animation (60 chars/sec)">
+  <StreamingTextTypingSpeedDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<StreamingText
+  content={fullText}
+  isStreaming={false}
+  typingSpeed={60}
+  onStreamEnd={() => console.log('Typing animation complete')}
+/>`}
+  lang="tsx"
+/>
+
+<Callout variant="tip">
+  When typingSpeed is omitted, content displays instantly with no timers — zero overhead for production use.
+</Callout>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "content", type: "string", description: "Accumulated text content so far" },
+    { name: "isStreaming", type: "boolean", description: "Whether tokens are still arriving" },
+    { name: "onStreamEnd", type: "() => void", description: "Fires when streaming stops and typing catches up" },
+    { name: "cursorStyle", type: "'line' | 'block' | 'underscore'", default: "'line'", description: "Cursor appearance" },
+    { name: "typingSpeed", type: "number", description: "Characters per second for simulated typing. Omit for instant." },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "{ root?, text?, cursor? }", description: "Granular class overrides" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-streaming-text` | Root container |
+| `an-streaming-text__text` | Text content span |
+| `an-streaming-text__cursor` | Cursor element |
+| `an-streaming-text__cursor--line` | 2px vertical bar cursor |
+| `an-streaming-text__cursor--block` | 0.6em wide block cursor |
+| `an-streaming-text__cursor--underscore` | 2px bottom border cursor |
+| `an-streaming-text__cursor--hidden` | Hides cursor when not streaming |
+
+## Accessibility
+
+- Root element has `role="log"` and `aria-live="polite"` for screen reader updates
+- Cursor has `aria-hidden="true"` (decorative)
+- `prefers-reduced-motion: reduce` shows a solid cursor without blinking
+
+## Related
+
+- [useStreamingText](/docs/hooks/use-streaming-text) — the hook powering the typing animation

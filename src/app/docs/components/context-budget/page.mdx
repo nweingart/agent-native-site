@@ -1,0 +1,138 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { ContextBudgetBasicDemo, ContextBudgetWarningDemo, ContextBudgetDangerDemo, ContextBudgetRingDemo } from "@/components/demos/ContextBudgetDemo";
+
+# ContextBudget
+
+Token budget meter showing context window usage. Visualizes input tokens, output tokens, system prompt, cache, and remaining capacity as a stacked bar or ring chart.
+
+<FeatureList
+  features={[
+    "Horizontal stacked bar layout (default) or circular ring chart",
+    "Segments for system, input, output, and cache tokens",
+    "Legend with token counts and percentages",
+    "Warning (yellow) and danger (red) threshold indicators",
+    "Threshold callback for programmatic alerts",
+    "Animated segment growth on mount",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <ContextBudgetBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { ContextBudget } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { ContextBudget } from 'agent-native';
+import type { ContextBudgetData } from 'agent-native';
+
+function MyBudgetMeter({ budget }: { budget: ContextBudgetData }) {
+  return (
+    <ContextBudget
+      budget={budget}
+      onThresholdReached={(level) => console.warn('Context budget:', level)}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyBudgetMeter.tsx"
+/>
+
+---
+
+## Examples
+
+### Warning Threshold
+
+At 80%+ usage the bar border turns yellow.
+
+<LiveDemo title="Warning">
+  <ContextBudgetWarningDemo />
+</LiveDemo>
+
+### Danger Threshold
+
+At 95%+ usage the bar border turns red.
+
+<LiveDemo title="Danger">
+  <ContextBudgetDangerDemo />
+</LiveDemo>
+
+### Ring Layout
+
+Circular donut chart with percentage in center.
+
+<LiveDemo title="Ring">
+  <ContextBudgetRingDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<ContextBudget budget={budget} layout="ring" />`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "budget", type: "ContextBudgetData", description: "Token budget data with max, input, output, system, and cache tokens" },
+    { name: "showLabels", type: "boolean", default: "true", description: "Show labels inside bar segments (bar layout only)" },
+    { name: "showPercentages", type: "boolean", default: "true", description: "Show percentages in the legend" },
+    { name: "layout", type: "'bar' | 'ring'", default: "'bar'", description: "Visual layout mode" },
+    { name: "warningThreshold", type: "number", default: "0.8", description: "Usage fraction (0-1) that triggers warning state" },
+    { name: "dangerThreshold", type: "number", default: "0.95", description: "Usage fraction (0-1) that triggers danger state" },
+    { name: "onThresholdReached", type: "(level: 'warning' | 'danger') => void", description: "Called when usage crosses a threshold" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "ContextBudgetClassNames", description: "Granular class overrides for all internal elements" },
+  ]}
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer container |
+| `bar` | The bar or ring element |
+| `segment` | Each token segment |
+| `label` | Inline segment label text |
+| `legend` | Legend container |
+| `remaining` | Remaining capacity label |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-context-budget` | Root container |
+| `an-context-budget--bar` | Bar layout mode |
+| `an-context-budget--ring` | Ring layout mode |
+| `an-context-budget--warning` | Warning threshold reached |
+| `an-context-budget--danger` | Danger threshold reached |
+| `an-context-budget__bar` | The stacked bar |
+| `an-context-budget__segment--{type}` | Segment by type (system, input, output, cache) |
+| `an-context-budget__legend` | Legend below the bar |
+
+## Accessibility
+
+- Bar/ring element has `role="meter"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`
+- Descriptive `aria-label` with token counts
+
+## Related
+
+- [ContextBudgetData type](/docs/types/reference) — the budget data structure
+- [AgentStatusBar](/docs/components/agent-status-bar) — compact status bar with token counts

@@ -1,72 +1,98 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { TimelineConnector, TimelineStep } from "agent-native";
+import { useState, useEffect, useCallback } from "react";
+import { AgentTimeline } from "agent-native";
 import type { AgentStep } from "agent-native";
 
-export function ConnectorFillDemo() {
-  const steps: AgentStep[] = [
-    { id: "1", label: "Completed step", status: "complete", startedAt: Date.now() - 5000, completedAt: Date.now() - 3000 },
-    { id: "2", label: "Running step", status: "running", startedAt: Date.now() - 2000 },
-    { id: "3", label: "Pending step", status: "pending" },
-  ];
+const initialSteps: AgentStep[] = [
+  { id: "1", label: "Scanning repository", description: "Found 23 source files", status: "complete", startedAt: Date.now() - 8000, completedAt: Date.now() - 6000 },
+  { id: "2", label: "Analyzing dependencies", description: "Resolved 128 packages", status: "complete", startedAt: Date.now() - 6000, completedAt: Date.now() - 3000 },
+  { id: "3", label: "Applying changes", description: "12 files updated", status: "running", startedAt: Date.now() - 3000 },
+  { id: "4", label: "Running verification", status: "pending" },
+];
 
+export function ConnectorFillDemo() {
   return (
-    <div>
-      <TimelineStep step={steps[0]} />
-      <TimelineConnector fillPercent={100} />
-      <TimelineStep step={steps[1]} />
-      <TimelineConnector fillPercent={50} />
-      <TimelineStep step={steps[2]} />
-      <TimelineConnector fillPercent={0} />
-    </div>
+    <AgentTimeline steps={initialSteps} showElapsedTime />
   );
 }
 
-export function AnimatedConnectorDemo() {
-  const [fill, setFill] = useState(0);
+export function ConnectorProgressDemo() {
+  const [steps, setSteps] = useState<AgentStep[]>(() =>
+    initialSteps.map((s) => ({ ...s, status: "pending" as const, startedAt: undefined, completedAt: undefined, description: s.description }))
+  );
+
+  const update = useCallback(
+    (id: string, updates: Partial<AgentStep>) => {
+      setSteps((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+    },
+    [],
+  );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFill((prev) => (prev >= 100 ? 0 : prev + 1));
-    }, 50);
-    return () => clearInterval(interval);
-  }, []);
+    let cancelled = false;
+    const timeoutRef: { current?: ReturnType<typeof setTimeout> } = {};
+
+    const delay = (ms: number) =>
+      new Promise<void>((resolve, reject) => {
+        timeoutRef.current = setTimeout(() => {
+          if (cancelled) reject(new Error("cancelled"));
+          else resolve();
+        }, ms);
+      });
+
+    const run = async () => {
+      try {
+        while (!cancelled) {
+          // Reset
+          setSteps(initialSteps.map((s) => ({ ...s, status: "pending" as const, startedAt: undefined, completedAt: undefined })));
+          await delay(800);
+
+          // Step 1
+          update("1", { status: "running", startedAt: Date.now() });
+          await delay(1000);
+          update("1", { status: "complete", completedAt: Date.now() });
+          await delay(300);
+
+          // Step 2
+          update("2", { status: "running", startedAt: Date.now() });
+          await delay(1000);
+          update("2", { status: "complete", completedAt: Date.now() });
+          await delay(300);
+
+          // Step 3
+          update("3", { status: "running", startedAt: Date.now() });
+          await delay(1200);
+          update("3", { status: "complete", completedAt: Date.now() });
+          await delay(300);
+
+          // Step 4
+          update("4", { status: "running", startedAt: Date.now() });
+          await delay(1000);
+          update("4", { status: "complete", completedAt: Date.now() });
+
+          await delay(2000);
+        }
+      } catch {
+        // cancelled
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [update]);
 
   return (
-    <div className="flex items-center gap-6">
-      <div className="flex-1">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-sm text-muted-foreground">0%</span>
-          <div className="relative h-24 w-0.5 mx-auto">
-            <TimelineConnector fillPercent={0} />
-          </div>
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-sm text-muted-foreground">50%</span>
-          <div className="relative h-24 w-0.5 mx-auto">
-            <TimelineConnector fillPercent={50} />
-          </div>
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-sm text-muted-foreground">100%</span>
-          <div className="relative h-24 w-0.5 mx-auto">
-            <TimelineConnector fillPercent={100} />
-          </div>
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-sm text-muted-foreground font-mono">{fill}%</span>
-          <div className="relative h-24 w-0.5 mx-auto">
-            <TimelineConnector fillPercent={fill} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <AgentTimeline steps={steps} showElapsedTime />
+  );
+}
+
+export function ConnectorDisabledDemo() {
+  return (
+    <AgentTimeline steps={initialSteps} showConnectors={false} showElapsedTime />
   );
 }

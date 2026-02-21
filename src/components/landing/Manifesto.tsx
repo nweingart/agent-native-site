@@ -17,9 +17,9 @@ export function Manifesto() {
           </p>
           <p>
             <span className="text-foreground font-semibold">agent-native</span>{" "}
-            is a timeline component. Steps with statuses. Parallel execution
-            tiers. Approval gates. Elapsed timers. Accessible, themeable,
-            headless.
+            is a component library for agent UIs. Timelines, code diffs,
+            terminal output, task trees, agent handoffs, cost tracking,
+            permissions. Accessible, themeable, headless.
           </p>
         </div>
       </div>

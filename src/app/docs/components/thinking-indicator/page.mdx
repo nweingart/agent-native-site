@@ -1,0 +1,128 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { ThinkingIndicatorBasicDemo, ThinkingIndicatorVariantsDemo, ThinkingIndicatorLabelDemo } from "@/components/demos/ThinkingIndicatorDemo";
+
+# ThinkingIndicator
+
+Visual indicator for the "model is reasoning" phase — distinct from a loading spinner. Uses `useVisualMemory` for smooth enter/exit transitions.
+
+<FeatureList
+  features={[
+    "Three animation variants: shimmer, dots, pulse",
+    "Smooth enter/exit via useVisualMemory transitions",
+    "Customizable label text",
+    "Returns null when fully inactive (no DOM footprint)",
+    "Accessible: role=\"status\", aria-live=\"polite\"",
+    "Reduced motion: static indicators, no animation",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <ThinkingIndicatorBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { ThinkingIndicator } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { ThinkingIndicator } from 'agent-native';
+
+function MyAgent() {
+  const [isThinking, setIsThinking] = useState(true);
+
+  return (
+    <ThinkingIndicator
+      isThinking={isThinking}
+      label="Reasoning..."
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyAgent.tsx"
+/>
+
+---
+
+## Examples
+
+### Animation Variants
+
+Three distinct animation styles for different UI contexts.
+
+<LiveDemo title="All Variants">
+  <ThinkingIndicatorVariantsDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<ThinkingIndicator isThinking variant="shimmer" />  {/* Gradient sweep bar */}
+<ThinkingIndicator isThinking variant="dots" />     {/* Three bouncing dots */}
+<ThinkingIndicator isThinking variant="pulse" />    {/* Pulsing circle */}`}
+  lang="tsx"
+/>
+
+### Custom Labels
+
+Set the `label` prop to describe what the model is doing.
+
+<LiveDemo title="Custom Labels">
+  <ThinkingIndicatorLabelDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<ThinkingIndicator isThinking label="Thinking..." />
+<ThinkingIndicator isThinking label="Reasoning about your code" variant="dots" />
+<ThinkingIndicator isThinking label="Planning next steps" variant="pulse" />`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "isThinking", type: "boolean", description: "Whether the model is currently thinking/reasoning" },
+    { name: "label", type: "string", default: "\"Thinking\"", description: "Label text displayed next to the animation" },
+    { name: "variant", type: "'shimmer' | 'dots' | 'pulse'", default: "'shimmer'", description: "Animation style" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "{ root?, animation?, label? }", description: "Granular class overrides" },
+  ]}
+/>
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-thinking-indicator` | Root container |
+| `an-thinking-indicator--shimmer` | Shimmer variant modifier |
+| `an-thinking-indicator--dots` | Dots variant modifier |
+| `an-thinking-indicator--pulse` | Pulse variant modifier |
+| `an-thinking-indicator--enter` | Enter animation state |
+| `an-thinking-indicator--exit` | Exit animation state |
+| `an-thinking-indicator__animation` | Animation container |
+| `an-thinking-indicator__shimmer` | Shimmer bar element |
+| `an-thinking-indicator__dot` | Individual dot element |
+| `an-thinking-indicator__pulse` | Pulse circle element |
+| `an-thinking-indicator__label` | Label text element |
+
+## Accessibility
+
+- Root element has `role="status"` and `aria-live="polite"`
+- `aria-label` is set from the label prop (defaults to "Thinking")
+- `prefers-reduced-motion: reduce` shows static indicators without animation
+
+## Related
+
+- [useVisualMemory](/docs/hooks/use-visual-memory) — powers the enter/exit transitions

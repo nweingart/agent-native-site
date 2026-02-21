@@ -1,0 +1,141 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { CostTrackerBasicDemo, CostTrackerUngroupedDemo, CostTrackerSummaryOnlyDemo } from "@/components/demos/CostTrackerDemo";
+
+# CostTracker
+
+Running tally of API costs per model and per call. Shows a summary bar with total cost and model breakdowns, plus a detailed table of individual API calls.
+
+<FeatureList
+  features={[
+    "Summary bar with bold total cost and per-model pills",
+    "Detailed table with per-call breakdown (model, label, tokens, cost, time)",
+    "Group by model with subtotals, or flat list",
+    "Clickable rows with keyboard support",
+    "Scrollable table with maxHeight",
+    "Custom currency symbol",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <CostTrackerBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { CostTracker } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { CostTracker } from 'agent-native';
+import type { CostEntry } from 'agent-native';
+
+function MyCostView({ entries }: { entries: CostEntry[] }) {
+  return (
+    <CostTracker
+      entries={entries}
+      groupBy="model"
+      onEntryClick={(entry) => console.log('Clicked:', entry.label)}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyCostView.tsx"
+/>
+
+---
+
+## Examples
+
+### Ungrouped
+
+Flat table without model grouping. Shows model column per row.
+
+<LiveDemo title="Ungrouped">
+  <CostTrackerUngroupedDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<CostTracker entries={entries} groupBy="none" />`}
+  lang="tsx"
+/>
+
+### Summary Only
+
+Hide the table and show just the cost summary.
+
+<LiveDemo title="Summary Only">
+  <CostTrackerSummaryOnlyDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<CostTracker entries={entries} showTable={false} />`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "entries", type: "CostEntry[]", description: "API call cost entries" },
+    { name: "currency", type: "string", default: "'$'", description: "Currency symbol prefix" },
+    { name: "showTable", type: "boolean", default: "true", description: "Show per-call breakdown table" },
+    { name: "showSummary", type: "boolean", default: "true", description: "Show aggregated summary bar" },
+    { name: "groupBy", type: "'model' | 'none'", default: "'model'", description: "Group table rows by model" },
+    { name: "maxHeight", type: "number | string", description: "Max height for scrollable table" },
+    { name: "onEntryClick", type: "(entry: CostEntry) => void", description: "Callback when a table row is clicked" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "CostTrackerClassNames", description: "Granular class overrides for all internal elements" },
+  ]}
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer container |
+| `summary` | Summary bar |
+| `summaryTotal` | Total cost number |
+| `summaryModel` | Model pill badges |
+| `table` | Table wrapper |
+| `tableHeader` | Table header row |
+| `tableRow` | Each data row |
+| `tableCell` | Individual cells |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-cost-tracker` | Root container |
+| `an-cost-tracker__summary` | Summary section |
+| `an-cost-tracker__summary-total` | Bold total cost |
+| `an-cost-tracker__summary-model` | Model pill badge |
+| `an-cost-tracker__table` | The table element |
+| `an-cost-tracker__row` | Data row |
+| `an-cost-tracker__row--clickable` | Clickable row with hover |
+| `an-cost-tracker__group-header` | Model group header |
+| `an-cost-tracker__table-total` | Total footer row |
+
+## Accessibility
+
+- Table uses `role="table"` with proper `role="row"` and `role="cell"`
+- Column headers use `role="columnheader"`
+- Summary has `aria-label`
+- Clickable rows are keyboard accessible with `tabindex="0"`
+
+## Related
+
+- [CostEntry type](/docs/types/reference) — the cost entry data structure
+- [AgentStatusBar](/docs/components/agent-status-bar) — compact bar with cost display

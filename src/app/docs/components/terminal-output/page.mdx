@@ -1,0 +1,152 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { TerminalOutputBasicDemo, TerminalOutputBuildDemo, TerminalOutputCollapsibleDemo } from "@/components/demos/TerminalOutputDemo";
+
+# TerminalOutput
+
+Streaming terminal/log output renderer with ANSI color support, auto-scroll, line numbers, and collapsible regions. Always renders with a dark terminal theme regardless of the app's color scheme.
+
+<FeatureList
+  features={[
+    "ANSI escape code parsing (16 colors, bold, dim, italic, underline)",
+    "Auto-scroll follows new lines, pauses when user scrolls up",
+    "Streaming cursor indicator",
+    "Exit code badge (green for 0, red for nonzero)",
+    "Optional collapsible wrapper (details/summary)",
+    "Dark theme always (conventional terminal appearance)",
+    "Click handler per line",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <TerminalOutputBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { TerminalOutput } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TerminalOutput } from 'agent-native';
+
+function MyTerminal() {
+  const [lines, setLines] = useState<string[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+
+  return (
+    <TerminalOutput
+      lines={lines}
+      isStreaming={isRunning}
+      title="npm install"
+      exitCode={isRunning ? undefined : 0}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyTerminal.tsx"
+/>
+
+---
+
+## Examples
+
+### Build Output
+
+Static terminal output with ANSI colors and exit code.
+
+<LiveDemo title="Build Output">
+  <TerminalOutputBuildDemo />
+</LiveDemo>
+
+### Collapsible
+
+Wrap in a collapsible `details/summary` element for long outputs.
+
+<LiveDemo title="Collapsible (click to expand)">
+  <TerminalOutputCollapsibleDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<TerminalOutput
+  lines={lines}
+  title="npm install"
+  exitCode={0}
+  collapsible
+  defaultExpanded={false}
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "lines", type: "string[]", description: "Raw text lines (may contain ANSI escape codes)" },
+    { name: "isStreaming", type: "boolean", default: "false", description: "Shows streaming cursor when true" },
+    { name: "title", type: "string", description: "Title shown in header bar" },
+    { name: "exitCode", type: "number", description: "Exit code badge (green 0, red nonzero)" },
+    { name: "maxHeight", type: "number | string", default: "400", description: "Max height for scroll container" },
+    { name: "collapsible", type: "boolean", default: "false", description: "Wraps in details/summary" },
+    { name: "defaultExpanded", type: "boolean", default: "true", description: "Initial expanded state when collapsible" },
+    { name: "onLineClick", type: "(line: string, index: number) => void", description: "Callback when a line is clicked" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "TerminalOutputClassNames", description: "Granular class overrides" },
+  ]}
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer terminal container |
+| `header` | Header bar |
+| `title` | Title text |
+| `exitCode` | Exit code badge |
+| `body` | Scrollable body |
+| `line` | Each output line |
+| `lineNumber` | Line number |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-terminal` | Root container (always dark theme) |
+| `an-terminal__header` | Header bar |
+| `an-terminal__exit-code--success` | Green exit code badge |
+| `an-terminal__exit-code--error` | Red exit code badge |
+| `an-terminal__cursor` | Blinking streaming cursor |
+| `an-terminal__ansi--{color}` | ANSI foreground color classes |
+
+## ANSI Support
+
+The built-in parser handles SGR escape codes:
+- **Styles:** bold (1), dim (2), italic (3), underline (4), reset (0)
+- **Colors:** 8 standard (30-37) + 8 bright (90-97) foreground colors
+- **Backgrounds:** 8 standard (40-47) + 8 bright (100-107) background colors
+
+The `parseAnsi` utility is also exported for standalone use.
+
+## Accessibility
+
+- Body has `role="log"` and `aria-live="polite"`
+- Streaming cursor is `aria-hidden="true"`
+- Exit code badge has `aria-label`
+- `prefers-reduced-motion: reduce` stops cursor blinking
+
+## Related
+
+- [useAutoScroll](/docs/hooks/use-auto-scroll) — the hook powering auto-scroll behavior
+- [parseAnsi](/docs/types/reference) — standalone ANSI parsing utility

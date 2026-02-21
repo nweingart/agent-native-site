@@ -14,20 +14,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "agent-native: Timeline UI for AI agents",
+  title: "agent-native: React Components for AI Agents",
   description:
-    "A headless React timeline component for agent interfaces. Steps, parallel tiers, approval gates, elapsed time.",
+    "A headless React component library for AI agent interfaces. Timelines, diffs, terminals, task trees, approvals, cost tracking, and more.",
   openGraph: {
-    title: "agent-native: Timeline UI for AI agents",
+    title: "agent-native: React Components for AI Agents",
     description:
-      "A headless React timeline component for agent interfaces. Steps, parallel tiers, approval gates, elapsed time.",
+      "A headless React component library for AI agent interfaces. Timelines, diffs, terminals, task trees, approvals, cost tracking, and more.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "agent-native: Timeline UI for AI agents",
+    title: "agent-native: React Components for AI Agents",
     description:
-      "A headless React timeline component for agent interfaces.",
+      "A headless React component library for AI agent interfaces.",
   },
 };
 

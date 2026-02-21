@@ -1,0 +1,145 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { TaskTreeBasicDemo, TaskTreeAnimatedDemo, TaskTreeCollapsedDemo } from "@/components/demos/TaskTreeDemo";
+
+# TaskTree
+
+Nested tree of tasks and subtasks with status indicators, expand/collapse, and optional connector lines. Visualize how an agent decomposes work into hierarchical steps.
+
+<FeatureList
+  features={[
+    "Nested tree with unlimited depth",
+    "Status indicators (pending, running, complete, error, etc.)",
+    "Expand/collapse with chevron animation",
+    "Auto-expands nodes with running children",
+    "Optional elapsed time display",
+    "Vertical connector lines",
+    "Controlled or uncontrolled expansion state",
+    "Custom node content via render prop",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <TaskTreeBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { TaskTree } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { TaskTree } from 'agent-native';
+import type { TaskNode } from 'agent-native';
+
+const tasks: TaskNode[] = [
+  {
+    id: '1',
+    label: 'Refactor auth',
+    status: 'running',
+    children: [
+      { id: '1-1', label: 'Extract service', status: 'complete' },
+      { id: '1-2', label: 'Update middleware', status: 'running' },
+      { id: '1-3', label: 'Write tests', status: 'pending' },
+    ],
+  },
+];
+
+function MyTaskView() {
+  return <TaskTree tasks={tasks} defaultExpandAll showElapsedTime />;
+}`}
+  lang="tsx"
+  filename="MyTaskView.tsx"
+/>
+
+---
+
+## Examples
+
+### Auto-Expanding Running Tasks
+
+Nodes with running children automatically expand. Watch subtask 2-2 complete and 2-3 start after 3 seconds.
+
+<LiveDemo title="Animated Progress">
+  <TaskTreeAnimatedDemo />
+</LiveDemo>
+
+### Default Collapsed
+
+Without `defaultExpandAll`, only nodes with running children auto-expand.
+
+<LiveDemo title="Collapsed by Default">
+  <TaskTreeCollapsedDemo />
+</LiveDemo>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "tasks", type: "TaskNode[]", description: "Root-level tasks" },
+    { name: "expandedIds", type: "string[]", description: "Controlled expanded state" },
+    { name: "defaultExpandAll", type: "boolean", default: "false", description: "Expand all nodes initially" },
+    { name: "showElapsedTime", type: "boolean", default: "false", description: "Show elapsed time for tasks with timestamps" },
+    { name: "showConnectors", type: "boolean", default: "true", description: "Show vertical tree connector lines" },
+    { name: "onNodeClick", type: "(node: TaskNode) => void", description: "Callback when a node is clicked" },
+    { name: "onNodeToggle", type: "(nodeId: string, expanded: boolean) => void", description: "Callback when expansion state changes" },
+    { name: "renderNodeContent", type: "(node: TaskNode) => ReactNode", description: "Custom renderer for node content" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "TaskTreeClassNames", description: "Granular class overrides" },
+  ]}
+/>
+
+## TaskNode Type
+
+<CodeBlock
+  code={`interface TaskNode {
+  id: string;
+  label: string;
+  status: StepStatus;
+  description?: string;
+  children?: TaskNode[];
+  startedAt?: number;
+  completedAt?: number;
+  error?: string;
+  metadata?: Record<string, unknown>;
+}`}
+  lang="ts"
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Root tree list |
+| `node` | Each tree node `<li>` |
+| `nodeRow` | Clickable row with chevron + indicator + label |
+| `indicator` | Status indicator circle |
+| `label` | Task label text |
+| `description` | Description text below label |
+| `children` | Children list container |
+| `connector` | Vertical connector lines |
+
+## Accessibility
+
+- Root element has `role="tree"` with `aria-label`
+- Each node has `role="treeitem"` with `aria-expanded`
+- Children containers have `role="group"`
+- All interactive elements have keyboard support (Enter/Space)
+- `prefers-reduced-motion: reduce` stops spinner animation
+
+## Related
+
+- [StepStatus type](/docs/types/reference) — the 8 status values
+- [AgentTimeline](/docs/components/agent-timeline) — for linear step sequences

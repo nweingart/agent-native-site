@@ -22,14 +22,14 @@ export function Hero() {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-            Timeline UI for{" "}
+            React components for{" "}
             <span className="text-accent">AI agents.</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg text-muted max-w-2xl mb-8 leading-relaxed">
-            Show users what your agent is doing. Steps, parallel execution,
-            approval gates, elapsed time. One React component.
+            Show users what your agent is doing. Timelines, diffs, terminals,
+            task trees, approvals, and more. 19 components, 7 hooks.
           </p>
 
           {/* Install command */}

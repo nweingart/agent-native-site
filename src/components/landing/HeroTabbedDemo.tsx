@@ -22,17 +22,17 @@ const TABS: { id: TabId; label: string }[] = [
 // ---------------------------------------------------------------------------
 
 const BASIC_STEPS: AgentStep[] = [
-  { id: "scan", label: "Scanning repository", status: "pending" },
-  { id: "analyze", label: "Analyzing 847 files", status: "pending" },
-  { id: "apply", label: "Applying changes", status: "pending" },
+  { id: "scan", label: "Scanning repository", description: "Found 23 source files", status: "pending" },
+  { id: "analyze", label: "Analyzing 847 files", description: "Resolved 128 packages", status: "pending" },
+  { id: "apply", label: "Applying changes", description: "12 files updated", status: "pending" },
 ];
 
 const TIER_STEPS: AgentStep[] = [
-  { id: "install", label: "Installing dependencies", status: "pending" },
-  { id: "lint", label: "ESLint", status: "pending" },
-  { id: "typecheck", label: "TypeScript", status: "pending" },
-  { id: "test", label: "Running tests", status: "pending" },
-  { id: "deploy", label: "Deploying to staging", status: "pending" },
+  { id: "install", label: "Installing dependencies", description: "47 packages", status: "pending" },
+  { id: "lint", label: "ESLint", description: "0 errors", status: "pending" },
+  { id: "typecheck", label: "TypeScript", description: "No type errors", status: "pending" },
+  { id: "test", label: "Running tests", description: "52/52 passing", status: "pending" },
+  { id: "deploy", label: "Deploying to staging", description: "Live at staging.example.com", status: "pending" },
 ];
 
 const TIER_GROUPS: StepTier[] = [
@@ -40,9 +40,9 @@ const TIER_GROUPS: StepTier[] = [
 ];
 
 const APPROVAL_STEPS: AgentStep[] = [
-  { id: "plan", label: "Generating refactor plan", status: "pending" },
-  { id: "preview", label: "Preparing preview", status: "pending" },
-  { id: "execute", label: "Executing refactor", status: "pending" },
+  { id: "plan", label: "Generating refactor plan", description: "8 components identified", status: "pending" },
+  { id: "preview", label: "Preparing preview", description: "3 files, 247 lines changed", status: "pending" },
+  { id: "execute", label: "Executing refactor", description: "8 components updated", status: "pending" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -64,19 +64,19 @@ async function runBasicLoop(
   // Scan
   update("scan", { status: "running", startedAt: Date.now() });
   await delay(900);
-  update("scan", { status: "complete", completedAt: Date.now(), description: "Found 23 source files" });
+  update("scan", { status: "complete", completedAt: Date.now() });
   await delay(300);
 
   // Analyze
   update("analyze", { status: "running", startedAt: Date.now() });
   await delay(1000);
-  update("analyze", { status: "complete", completedAt: Date.now(), description: "Resolved 128 packages" });
+  update("analyze", { status: "complete", completedAt: Date.now() });
   await delay(300);
 
   // Apply
   update("apply", { status: "running", startedAt: Date.now() });
   await delay(1100);
-  update("apply", { status: "complete", completedAt: Date.now(), description: "12 files updated" });
+  update("apply", { status: "complete", completedAt: Date.now() });
 
   await delay(2500);
 }
@@ -93,7 +93,7 @@ async function runTierLoop(
   // Install (sequential)
   update("install", { status: "running", startedAt: Date.now() });
   await delay(900);
-  update("install", { status: "complete", completedAt: Date.now(), description: "47 packages" });
+  update("install", { status: "complete", completedAt: Date.now() });
   await delay(300);
 
   // Parallel tier — start all 3 at once
@@ -104,17 +104,17 @@ async function runTierLoop(
   await delay(800);
 
   // Staggered completion
-  update("lint", { status: "complete", completedAt: Date.now(), description: "0 errors" });
+  update("lint", { status: "complete", completedAt: Date.now() });
   await delay(400);
-  update("typecheck", { status: "complete", completedAt: Date.now(), description: "No type errors" });
+  update("typecheck", { status: "complete", completedAt: Date.now() });
   await delay(500);
-  update("test", { status: "complete", completedAt: Date.now(), description: "52/52 passing" });
+  update("test", { status: "complete", completedAt: Date.now() });
   await delay(300);
 
   // Deploy (sequential)
   update("deploy", { status: "running", startedAt: Date.now() });
   await delay(1000);
-  update("deploy", { status: "complete", completedAt: Date.now(), description: "Live at staging.example.com" });
+  update("deploy", { status: "complete", completedAt: Date.now() });
 
   await delay(2500);
 }
@@ -133,13 +133,13 @@ async function runApprovalLoop(
   // Plan
   update("plan", { status: "running", startedAt: Date.now() });
   await delay(900);
-  update("plan", { status: "complete", completedAt: Date.now(), description: "8 components identified" });
+  update("plan", { status: "complete", completedAt: Date.now() });
   await delay(300);
 
   // Preview
   update("preview", { status: "running", startedAt: Date.now() });
   await delay(1000);
-  update("preview", { status: "complete", completedAt: Date.now(), description: "3 files, 247 lines changed" });
+  update("preview", { status: "complete", completedAt: Date.now() });
   await delay(300);
 
   // Show approval gate (stepId points to the last completed step — gate renders after it)
@@ -156,7 +156,7 @@ async function runApprovalLoop(
   setApproval(undefined);
   update("execute", { status: "running", startedAt: Date.now() });
   await delay(1000);
-  update("execute", { status: "complete", completedAt: Date.now(), description: "8 components updated" });
+  update("execute", { status: "complete", completedAt: Date.now() });
 
   await delay(2500);
 }

@@ -1,0 +1,167 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { AgentStatusBarBasicDemo, AgentStatusBarMinimalDemo, AgentStatusBarClickableDemo } from "@/components/demos/AgentStatusBarDemo";
+
+# AgentStatusBar
+
+Compact horizontal bar showing agent state plus optional metrics — tokens, elapsed time, cost, and model name. Only sections with data render.
+
+<FeatureList
+  features={[
+    "6 status states: idle, thinking, acting, waiting, error, complete",
+    "Animated status dot (pulsing for active states)",
+    "Token usage display with locale formatting",
+    "Elapsed time from string or number (auto-formatted)",
+    "Cost display with smart decimal precision",
+    "Model name display in monospace",
+    "Clickable status with keyboard support",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <AgentStatusBarBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { AgentStatusBar } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { AgentStatusBar } from 'agent-native';
+
+function MyDashboard() {
+  return (
+    <AgentStatusBar
+      status="thinking"
+      tokenUsage={{ inputTokens: 1234, outputTokens: 567 }}
+      elapsed={95}
+      cost={0.0023}
+      model="claude-sonnet-4-20250514"
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyDashboard.tsx"
+/>
+
+---
+
+## Examples
+
+### Minimal Configurations
+
+Only pass the sections you need. The bar adapts its layout automatically.
+
+<LiveDemo title="Minimal Variants">
+  <AgentStatusBarMinimalDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`{/* Status only */}
+<AgentStatusBar status="idle" />
+
+{/* Status + elapsed */}
+<AgentStatusBar status="thinking" elapsed="12s" />
+
+{/* Status + tokens + cost */}
+<AgentStatusBar
+  status="complete"
+  tokenUsage={{ inputTokens: 5432, outputTokens: 1289 }}
+  cost={0.0156}
+/>`}
+  lang="tsx"
+/>
+
+### Clickable Status
+
+Pass `onStatusClick` to make the status section interactive. Useful for opening a details panel.
+
+<LiveDemo title="Clickable Status">
+  <AgentStatusBarClickableDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<AgentStatusBar
+  status="acting"
+  elapsed={30}
+  onStatusClick={(status) => console.log('Clicked:', status)}
+/>`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "status", type: "AgentStatus", description: "Current agent status: 'idle' | 'thinking' | 'acting' | 'waiting' | 'error' | 'complete'" },
+    { name: "tokenUsage", type: "TokenUsage", description: "Token usage data. Renders as \"1,234 in / 567 out\"." },
+    { name: "elapsed", type: "string | number", description: "Elapsed time. String passed through; number formatted as \"Xm Ys\"." },
+    { name: "cost", type: "number | CostBreakdown", description: "Cost display. Numbers under $0.01 show 4 decimals." },
+    { name: "model", type: "string", description: "Model name to display in monospace." },
+    { name: "onStatusClick", type: "(status: AgentStatus) => void", description: "Makes status section clickable with keyboard support." },
+    { name: "className", type: "string", description: "Additional class on the root element." },
+    { name: "classNames", type: "AgentStatusBarClassNames", description: "Granular class overrides for all internal elements." },
+  ]}
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer bar container |
+| `status` | Status section (dot + label) |
+| `statusDot` | Status indicator dot |
+| `statusLabel` | Status text label |
+| `tokens` | Token usage section |
+| `elapsed` | Elapsed time section |
+| `cost` | Cost section |
+| `model` | Model name section |
+| `divider` | Vertical divider between sections |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-status-bar` | Root container |
+| `an-status-bar__status` | Status section |
+| `an-status-bar__dot` | Status indicator dot |
+| `an-status-bar__dot--{status}` | Status-specific dot color |
+| `an-status-bar__dot--pulsing` | Pulsing animation for active states |
+| `an-status-bar__status-label` | Status text |
+| `an-status-bar__divider` | Vertical divider |
+| `an-status-bar__tokens` | Token usage text |
+| `an-status-bar__elapsed` | Elapsed time text |
+| `an-status-bar__cost` | Cost text |
+| `an-status-bar__model` | Model name (monospace) |
+
+## Data Attributes
+
+| Attribute | Element | Example |
+|-----------|---------|---------|
+| `data-status` | Root bar | `"thinking"` |
+
+## Accessibility
+
+- Root element has `role="status"` and `aria-live="polite"`
+- Each section has a descriptive `aria-label`
+- Clickable status gets `role="button"`, `tabIndex={0}`, and Enter/Space keyboard handling
+- `prefers-reduced-motion: reduce` disables dot pulsing
+
+## Related
+
+- [AgentStatus type](/docs/types/reference) — the 6 status values
+- [TokenUsage type](/docs/types/reference) — token tracking interface
+- [CostBreakdown type](/docs/types/reference) — detailed cost data

@@ -13,7 +13,7 @@ const tailwindCode = `<AgentTimeline
     root: "rounded-xl border border-zinc-700 bg-zinc-900 p-4",
     step: "rounded-lg px-3 py-2 hover:bg-zinc-800/50",
     indicator: "ring-2 ring-zinc-600",
-    connector: "bg-zinc-700",
+    stepBody: "ml-3",
   }}
 />`;
 
@@ -25,7 +25,7 @@ export async function CodeExample() {
           {/* Left: Explanation */}
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-              10 seconds to a working timeline.
+              10 seconds to a working agent UI.
             </h2>
             <p className="text-lg text-muted mb-6 leading-relaxed">
               Import the component. Pass your steps. That&apos;s it. No context

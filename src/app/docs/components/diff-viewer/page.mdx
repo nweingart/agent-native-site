@@ -1,0 +1,138 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { DiffViewerBasicDemo, DiffViewerAddedFileDemo, DiffViewerNoHeaderDemo } from "@/components/demos/DiffViewerDemo";
+
+# DiffViewer
+
+Unified or side-by-side code diff renderer. Renders `DiffFile` data with colored line backgrounds, line numbers, hunk headers, and file status badges.
+
+<FeatureList
+  features={[
+    "Unified and split (side-by-side) view modes",
+    "Line numbers with old/new columns",
+    "File header with path and status badge (added/modified/deleted/renamed)",
+    "Hunk headers with @@ range markers",
+    "Green/red line backgrounds for add/remove",
+    "Click handler per line",
+    "Scrollable body with optional maxHeight",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <DiffViewerBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { DiffViewer } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { DiffViewer } from 'agent-native';
+import type { DiffFile } from 'agent-native';
+
+function MyDiffView({ file }: { file: DiffFile }) {
+  return (
+    <DiffViewer
+      file={file}
+      view="unified"
+      onLineClick={(line, hunkIndex) => console.log(line, hunkIndex)}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyDiffView.tsx"
+/>
+
+---
+
+## Examples
+
+### Added File
+
+New files show all lines as additions with a green "Added" badge.
+
+<LiveDemo title="Added File">
+  <DiffViewerAddedFileDemo />
+</LiveDemo>
+
+### No Header + Max Height
+
+Hide the file header and constrain height for compact embedding.
+
+<LiveDemo title="Compact View">
+  <DiffViewerNoHeaderDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<DiffViewer file={file} showHeader={false} maxHeight={200} />`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "file", type: "DiffFile", description: "The diff data to render" },
+    { name: "view", type: "'unified' | 'split'", default: "'unified'", description: "Display mode" },
+    { name: "showLineNumbers", type: "boolean", default: "true", description: "Show line number columns" },
+    { name: "showHeader", type: "boolean", default: "true", description: "Show file path and status badge header" },
+    { name: "maxHeight", type: "number | string", description: "Optional max height for scroll container" },
+    { name: "onLineClick", type: "(line: DiffLine, hunkIndex: number) => void", description: "Callback when a line is clicked" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "DiffViewerClassNames", description: "Granular class overrides for all internal elements" },
+  ]}
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer container |
+| `header` | File header bar |
+| `headerPath` | File path text |
+| `headerBadge` | Status badge (Added/Modified/etc) |
+| `hunk` | Hunk container |
+| `hunkHeader` | Hunk `@@` header line |
+| `line` | Each diff line row |
+| `lineNumber` | Line number cells |
+| `lineContent` | Line text content |
+| `addedLine` | Added line row |
+| `removedLine` | Removed line row |
+| `contextLine` | Context (unchanged) line row |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-diff-viewer` | Root container |
+| `an-diff-viewer--split` | Applied in split view mode |
+| `an-diff-viewer__header` | File header |
+| `an-diff-viewer__header-badge--{status}` | Status-specific badge color |
+| `an-diff-viewer__hunk-header` | Hunk range header |
+| `an-diff-viewer__line--added` | Green background for additions |
+| `an-diff-viewer__line--removed` | Red background for deletions |
+| `an-diff-viewer__line--context` | Transparent background |
+
+## Accessibility
+
+- Root element has `role="table"` with descriptive `aria-label`
+- Each line is `role="row"`, cells are `role="cell"`
+- Hunk headers have `aria-label` with range info
+
+## Related
+
+- [DiffFile type](/docs/types/reference) — the diff data structure
+- [TimelineArtifact](/docs/components/timeline-artifact) — for rendering diffs inline in timelines

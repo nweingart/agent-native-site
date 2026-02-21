@@ -1,0 +1,106 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { Callout } from "@/components/mdx/Callout";
+
+# useStreamingText
+
+Manages displayed text for streaming output. In instant mode (default), `displayedText` always equals `content`. With `typingSpeed` set, it animates character-by-character using `requestAnimationFrame`.
+
+<FeatureList
+  features={[
+    "Zero overhead in instant mode (no timers, no rAF)",
+    "Smooth 60fps typing animation via requestAnimationFrame",
+    "Automatically catches up when content grows faster than typing speed",
+    "Handles content resets (shrinks charIndex when content shrinks)",
+    "Cleans up animation frames on unmount",
+  ]}
+/>
+
+## Import
+
+<CodeBlock
+  code={`import { useStreamingText } from 'agent-native';
+// or
+import { useStreamingText } from 'agent-native/hooks';`}
+  lang="tsx"
+/>
+
+## Signature
+
+<CodeBlock
+  code={`function useStreamingText(
+  content: string,
+  isStreaming: boolean,
+  options?: UseStreamingTextOptions,
+): UseStreamingTextReturn;
+
+interface UseStreamingTextOptions {
+  typingSpeed?: number;  // chars/sec. Omit for instant.
+}
+
+interface UseStreamingTextReturn {
+  displayedText: string; // text currently visible
+  isTyping: boolean;     // true while animation is catching up
+}`}
+  lang="typescript"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { useStreamingText } from 'agent-native';
+
+function MyOutput({ content, isStreaming }) {
+  // Instant mode — displayedText === content
+  const { displayedText } = useStreamingText(content, isStreaming);
+
+  return <pre>{displayedText}</pre>;
+}`}
+  lang="tsx"
+  filename="instant-mode.tsx"
+/>
+
+## Simulated Typing
+
+<CodeBlock
+  code={`function DemoOutput({ content, isStreaming }) {
+  const { displayedText, isTyping } = useStreamingText(content, isStreaming, {
+    typingSpeed: 80, // 80 characters per second
+  });
+
+  return (
+    <div>
+      <pre>{displayedText}</pre>
+      {isTyping && <span className="cursor" />}
+    </div>
+  );
+}`}
+  lang="tsx"
+  filename="typing-mode.tsx"
+/>
+
+<Callout variant="tip">
+  The StreamingText component wraps this hook with cursor rendering and accessibility attributes. Use the hook directly when you need custom rendering.
+</Callout>
+
+## Options
+
+<PropsTable
+  props={[
+    { name: "typingSpeed", type: "number", description: "Characters per second for simulated typing. When omitted, displayedText always equals content (instant mode)." },
+  ]}
+/>
+
+## Return Value
+
+<PropsTable
+  props={[
+    { name: "displayedText", type: "string", description: "The portion of content currently visible to the user." },
+    { name: "isTyping", type: "boolean", description: "True while the typing animation is still catching up to the full content." },
+  ]}
+/>
+
+## Related
+
+- [StreamingText](/docs/components/streaming-text) — the component that wraps this hook

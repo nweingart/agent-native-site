@@ -1,0 +1,164 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { AgentHandoffBasicDemo, AgentHandoffHorizontalDemo, AgentHandoffWithStepsDemo } from "@/components/demos/AgentHandoffDemo";
+
+# AgentHandoff
+
+Visualize multi-agent delegation chains. Shows agent cards connected by handoff arrows, with status indicators and optional inline step display.
+
+<FeatureList
+  features={[
+    "Agent cards with status-colored left border",
+    "Handoff arrows with task labels between agents",
+    "Active agent highlighting with glow effect",
+    "Vertical and horizontal layout modes",
+    "Optional inline step display per agent",
+    "Status dot with pulsing animation for running agents",
+    "Click handler per agent card",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <AgentHandoffBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { AgentHandoff } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { AgentHandoff } from 'agent-native';
+import type { SubAgent, HandoffEvent } from 'agent-native';
+
+const agents: SubAgent[] = [
+  { id: 'planner', name: 'Planner', status: 'complete', task: 'Decompose task' },
+  { id: 'coder', name: 'Coder', status: 'running', task: 'Implement changes' },
+  { id: 'reviewer', name: 'Reviewer', status: 'idle', task: 'Review code' },
+];
+
+const handoffs: HandoffEvent[] = [
+  { id: 'h1', fromAgentId: 'planner', toAgentId: 'coder', task: 'implement auth', timestamp: Date.now() },
+];
+
+function MyAgentView() {
+  return (
+    <AgentHandoff
+      agents={agents}
+      activeAgentId="coder"
+      handoffs={handoffs}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyAgentView.tsx"
+/>
+
+---
+
+## Examples
+
+### Horizontal Layout
+
+Lay out the agent chain left-to-right for wider containers.
+
+<LiveDemo title="Horizontal Layout">
+  <AgentHandoffHorizontalDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<AgentHandoff agents={agents} handoffs={handoffs} layout="horizontal" />`}
+  lang="tsx"
+/>
+
+### With Inline Steps
+
+Show each agent's steps inline. Watch the Coder complete and hand off to the Reviewer after 4 seconds.
+
+<LiveDemo title="With Steps (live transition)">
+  <AgentHandoffWithStepsDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<AgentHandoff agents={agents} handoffs={handoffs} showSteps />`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "agents", type: "SubAgent[]", description: "All agents in the system" },
+    { name: "activeAgentId", type: "string", description: "ID of the currently active agent" },
+    { name: "handoffs", type: "HandoffEvent[]", default: "[]", description: "Delegation events between agents" },
+    { name: "layout", type: "'vertical' | 'horizontal'", default: "'vertical'", description: "Layout direction" },
+    { name: "showSteps", type: "boolean", default: "false", description: "Show agent steps inline" },
+    { name: "onAgentClick", type: "(agent: SubAgent) => void", description: "Callback when an agent card is clicked" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "AgentHandoffClassNames", description: "Granular class overrides" },
+  ]}
+/>
+
+## HandoffEvent Type
+
+<CodeBlock
+  code={`interface HandoffEvent {
+  id: string;
+  fromAgentId: string;
+  toAgentId: string;
+  task?: string;
+  timestamp: number;
+}`}
+  lang="ts"
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer container |
+| `agent` | Agent card |
+| `agentHeader` | Agent name + status row |
+| `agentName` | Agent name text |
+| `agentStatus` | Agent status text |
+| `agentTask` | Agent task description |
+| `handoffArrow` | Arrow connector between agents |
+| `handoffLabel` | Task label on handoff arrow |
+| `steps` | Steps container within agent card |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-agent-handoff` | Root container |
+| `an-agent-handoff--vertical` | Vertical layout |
+| `an-agent-handoff--horizontal` | Horizontal layout |
+| `an-agent-handoff__agent--active` | Active agent card (glow + highlight) |
+| `an-agent-handoff__agent--{status}` | Status-specific left border |
+| `an-agent-handoff__dot--pulsing` | Pulsing animation for running agents |
+
+## Accessibility
+
+- Root element has `role="list"` with `aria-label`
+- Agent cards have `role="listitem"`
+- Active agent has `aria-current="true"`
+- Clickable agents get `tabIndex`, Enter/Space keyboard support
+- `prefers-reduced-motion: reduce` disables pulsing
+
+## Related
+
+- [SubAgent type](/docs/types/reference) — agent data structure
+- [AgentStatusBar](/docs/components/agent-status-bar) — compact agent status display
+- [AgentTimeline](/docs/components/agent-timeline) — step-level timeline view

@@ -17,11 +17,10 @@ export function ComponentShowcase() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-            One component, every pattern.
+            See it in action.
           </h2>
           <p className="text-lg text-muted max-w-2xl mx-auto">
-            Sequential steps, parallel execution, approval gates. All from{" "}
-            <code className="text-accent-foreground bg-surface px-1.5 py-0.5 rounded text-sm">{"<AgentTimeline>"}</code>.
+            The AgentTimeline handles steps, parallel tiers, and approval gates out of the box.
           </p>
         </div>
 

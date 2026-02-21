@@ -1,0 +1,153 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { LiveDemo } from "@/components/mdx/LiveDemo";
+import { PropsTable } from "@/components/mdx/PropsTable";
+import { FeatureList } from "@/components/mdx/FeatureList";
+import { PermissionBadgesBasicDemo, PermissionBadgesGroupedDemo, PermissionBadgesGrantedOnlyDemo, PermissionBadgesGridDemo } from "@/components/demos/PermissionBadgesDemo";
+
+# PermissionBadges
+
+Show what tools and permissions an agent has access to. Renders granted permissions with green check badges and denied permissions with red X badges.
+
+<FeatureList
+  features={[
+    "Inline pill badges (default) or grid card layout",
+    "Green granted badges with check icon, red denied badges with X icon",
+    "Optional category grouping with labeled headers",
+    "Hide denied permissions with showDenied=false",
+    "Tooltips via description on hover",
+    "Clickable badges with keyboard support",
+    "Full classNames override support",
+  ]}
+/>
+
+## Preview
+
+<LiveDemo>
+  <PermissionBadgesBasicDemo />
+</LiveDemo>
+
+## Import
+
+<CodeBlock
+  code={`import { PermissionBadges } from 'agent-native';
+import 'agent-native/styles';`}
+  lang="tsx"
+/>
+
+## Basic Usage
+
+<CodeBlock
+  code={`import { PermissionBadges } from 'agent-native';
+import type { Permission } from 'agent-native';
+
+const permissions: Permission[] = [
+  { id: 'read', name: 'File Read', granted: true, category: 'file' },
+  { id: 'shell', name: 'Shell', granted: false, category: 'shell' },
+];
+
+function MyPermissions() {
+  return (
+    <PermissionBadges
+      permissions={permissions}
+      onPermissionClick={(p) => console.log(p.name, p.granted)}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="MyPermissions.tsx"
+/>
+
+---
+
+## Examples
+
+### Category Grouping
+
+Group permissions by their category with labeled headers.
+
+<LiveDemo title="Grouped by Category">
+  <PermissionBadgesGroupedDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<PermissionBadges permissions={permissions} groupByCategory />`}
+  lang="tsx"
+/>
+
+### Granted Only
+
+Hide denied permissions for a cleaner view.
+
+<LiveDemo title="Granted Only">
+  <PermissionBadgesGrantedOnlyDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<PermissionBadges permissions={permissions} showDenied={false} />`}
+  lang="tsx"
+/>
+
+### Grid Layout
+
+Larger cards with descriptions for each permission.
+
+<LiveDemo title="Grid Layout">
+  <PermissionBadgesGridDemo />
+</LiveDemo>
+
+<CodeBlock
+  code={`<PermissionBadges permissions={permissions} layout="grid" />`}
+  lang="tsx"
+/>
+
+---
+
+## Props
+
+<PropsTable
+  props={[
+    { name: "permissions", type: "Permission[]", description: "List of permissions to display" },
+    { name: "layout", type: "'inline' | 'grid'", default: "'inline'", description: "Badge layout mode" },
+    { name: "showDenied", type: "boolean", default: "true", description: "Show denied permissions" },
+    { name: "groupByCategory", type: "boolean", default: "false", description: "Group badges by permission category" },
+    { name: "onPermissionClick", type: "(permission: Permission) => void", description: "Callback when a badge is clicked" },
+    { name: "className", type: "string", description: "Additional class on the root element" },
+    { name: "classNames", type: "PermissionBadgesClassNames", description: "Granular class overrides for all internal elements" },
+  ]}
+/>
+
+## classNames
+
+| Key | Target |
+|-----|--------|
+| `root` | Outer container |
+| `badge` | Each badge pill/card |
+| `badgeIcon` | Check/X icon wrapper |
+| `badgeName` | Permission name text |
+| `group` | Category group container |
+| `groupLabel` | Category label header |
+
+## CSS Classes
+
+| Class | Description |
+|-------|-------------|
+| `an-permission-badges` | Root container |
+| `an-permission-badges--inline` | Inline pill layout |
+| `an-permission-badges--grid` | Grid card layout |
+| `an-permission-badges__badge--granted` | Green granted badge |
+| `an-permission-badges__badge--denied` | Red denied badge |
+| `an-permission-badges__badge--clickable` | Clickable badge with hover |
+| `an-permission-badges__group` | Category group wrapper |
+| `an-permission-badges__group-label` | Category header text |
+
+## Accessibility
+
+- Root uses `role="list"` with `aria-label`
+- Each badge is `role="listitem"` with `aria-label` containing granted/denied state
+- Clickable badges have `tabindex="0"` and keyboard support (Enter/Space)
+- Descriptions available via `title` attribute for tooltips
+
+## Related
+
+- [Permission type](/docs/types/reference) — the permission data structure
+- [AgentHandoff](/docs/components/agent-handoff) — visualize agent delegation chains

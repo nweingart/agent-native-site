@@ -3,138 +3,60 @@ import { LiveDemo } from "@/components/mdx/LiveDemo";
 import { PropsTable } from "@/components/mdx/PropsTable";
 import { FeatureList } from "@/components/mdx/FeatureList";
 import { Callout } from "@/components/mdx/Callout";
-import { ConnectorFillDemo, AnimatedConnectorDemo } from "@/components/demos/StandaloneConnector";
+import { ConnectorFillDemo, ConnectorProgressDemo, ConnectorDisabledDemo } from "@/components/demos/StandaloneConnector";
 
-# TimelineConnector
+# Connectors
 
-A vertical line drawn between steps to show sequential flow. Includes an inner fill element that animates to indicate progress between steps. Managed automatically by AgentTimeline, but available standalone for custom timeline layouts.
+Vertical lines drawn between steps to show sequential flow. AgentTimeline renders connectors automatically using CSS pseudo-elements — no extra components needed. The connector color follows each step's status, creating a continuous progress trail.
 
 <FeatureList
   features={[
-    "Fill percentage from 0-100 for progress indication",
-    "Smooth CSS transition on fill changes",
-    "Aligned to the center of step indicators",
-    "Automatic fill logic when used inside AgentTimeline",
-    "Class override support",
+    "Continuous lines from circle to circle — no gaps",
+    "Color follows step status (green for complete, red for error)",
+    "First step: line below only. Last step: line above only",
+    "Automatically hidden for steps inside tiers",
+    "Disabled via showConnectors={false}",
     "Respects reduced motion preferences",
   ]}
 />
 
 ## Preview
 
-<LiveDemo title="Connectors Between Steps">
+<LiveDemo title="Automatic Connectors">
   <ConnectorFillDemo />
 </LiveDemo>
 
-## Import
+Completed steps have green connector lines. The running step and pending step use the default border color.
 
-<CodeBlock
-  code={`// From the main package
-import { TimelineConnector } from 'agent-native';
+## How It Works
 
-// Or via the compound component
-import { AgentTimeline } from 'agent-native';
-// Use as AgentTimeline.Connector`}
-  lang="tsx"
-/>
+AgentTimeline adds a `::before` pseudo-element to each step that draws a 2px vertical line through the indicator column. The indicator circle sits on top (via `z-index`) so the line appears to connect the circles seamlessly.
 
-## Basic Usage
+Each step receives a `connectorSegments` value that controls which parts of the line are visible:
 
-<CodeBlock
-  code={`import { TimelineConnector } from 'agent-native';
+| Position | Segments | Effect |
+|----------|----------|--------|
+| First step | `below` | Line from indicator center to bottom edge |
+| Middle steps | `both` | Line from top to bottom (full height) |
+| Last step | `above` | Line from top edge to indicator center |
+| Single step | `none` | No line |
+| Inside a tier | `none` | No line (tiers have their own border) |
 
-// Empty connector (no fill)
-<TimelineConnector />
+## Progress Animation
 
-// Half filled (next step is running)
-<TimelineConnector fillPercent={50} />
+As steps complete, connector lines turn green to show progress through the workflow:
 
-// Fully filled (next step is complete)
-<TimelineConnector fillPercent={100} />`}
-  lang="tsx"
-/>
-
----
-
-## Examples
-
-### Fill States
-
-When used inside AgentTimeline, fill percentages are set automatically based on the next step's status:
-
-| Next Step Status | fillPercent |
-|-----------------|-------------|
-| `pending` | `0` |
-| `running` or `streaming` | `50` |
-| `complete` or `error` | `100` |
-
-<LiveDemo title="Fill Percentages">
-  <AnimatedConnectorDemo />
+<LiveDemo title="Connector Progress">
+  <ConnectorProgressDemo />
 </LiveDemo>
 
-### Building a Custom Timeline
+## Disabling Connectors
 
-Use TimelineConnector with TimelineStep to compose your own timeline layout:
+Set `showConnectors={false}` to hide all connector lines:
 
-<CodeBlock
-  code={`import { TimelineStep, TimelineConnector } from 'agent-native';
-
-function CustomTimeline({ steps }) {
-  return (
-    <div>
-      {steps.map((step, i) => (
-        <div key={step.id}>
-          <TimelineStep step={step} />
-          {i < steps.length - 1 && (
-            <TimelineConnector
-              fillPercent={
-                steps[i + 1].status === 'complete' || steps[i + 1].status === 'error'
-                  ? 100
-                  : steps[i + 1].status === 'running'
-                  ? 50
-                  : 0
-              }
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}`}
-  lang="tsx"
-  filename="CustomTimeline.tsx"
-/>
-
-### Styling
-
-Override the connector appearance with Tailwind classes:
-
-<CodeBlock
-  code={`// Thicker, colored connector
-<TimelineConnector
-  fillPercent={75}
-  className="bg-zinc-700 w-1"
-/>
-
-// Or via AgentTimeline's classNames prop
-<AgentTimeline
-  steps={steps}
-  classNames={{
-    connector: "bg-zinc-700 w-1",
-  }}
-/>`}
-  lang="tsx"
-/>
-
-<Callout variant="info">
-  The connector is positioned to align with the center of the step indicator circle. Its height is determined by the gap between steps.
-</Callout>
-
----
-
-## Automatic Behavior in AgentTimeline
-
-You typically don't need to use TimelineConnector directly. When `showConnectors` is `true` (the default), AgentTimeline automatically renders connectors between steps with the correct fill percentages:
+<LiveDemo title="Connectors Disabled">
+  <ConnectorDisabledDemo />
+</LiveDemo>
 
 <CodeBlock
   code={`// Connectors are on by default
@@ -145,35 +67,63 @@ You typically don't need to use TimelineConnector directly. When `showConnectors
   lang="tsx"
 />
 
+When disabled, the root element gets the `an-timeline--no-connectors` class and all steps receive `connectorSegments="none"`.
+
 ---
-
-## Props
-
-<PropsTable
-  props={[
-    { name: "fillPercent", type: "number", default: "0", description: "Fill percentage (0-100). Controls the height of the inner fill element." },
-    { name: "className", type: "string", description: "Additional class on the connector root element" },
-  ]}
-/>
 
 ## CSS Classes
 
 | Class | Description |
 |-------|-------------|
-| `an-timeline__connector` | Root container (2px vertical line, border-color background) |
-| `an-timeline__connector-fill` | Inner fill bar (green/complete color, animated height transition) |
+| `an-timeline__step::before` | The connector line pseudo-element on each step |
+| `an-timeline__step--connector-both` | Full-height line (top to bottom) |
+| `an-timeline__step--connector-below` | Line from indicator center to bottom (first step) |
+| `an-timeline__step--connector-above` | Line from top to indicator center (last step) |
+| `an-timeline__step--connector-none` | No connector line |
+| `an-timeline--no-connectors` | Added to root when `showConnectors={false}` |
+| `an-timeline__step--complete::before` | Green connector line for completed steps |
+| `an-timeline__step--error::before` | Red connector line for error steps |
 
-## Internal Structure
+## Customizing Connector Appearance
+
+Override the connector line with CSS variables or custom styles:
 
 <CodeBlock
-  code={`<!-- Rendered HTML -->
-<div class="an-timeline__connector {className}">
-  <div
-    class="an-timeline__connector-fill"
-    style="height: {fillPercent}%"
-  />
-</div>`}
-  lang="html"
+  code={`/* Change connector color */
+.an-timeline__step::before {
+  background-color: var(--my-connector-color);
+}
+
+/* Change connector width */
+.an-timeline__step::before {
+  width: 3px;
+  /* Adjust left position to keep centered on indicator */
+  left: calc(var(--an-space-4) + 8.5px);
+}`}
+  lang="css"
 />
 
-The fill element transitions smoothly using `transition: height var(--an-duration-normal) var(--an-easing-default)`. When `prefers-reduced-motion: reduce` is active, the transition is disabled.
+---
+
+## Standalone TimelineConnector
+
+A standalone `TimelineConnector` component is also exported for building fully custom timeline layouts where you render steps manually:
+
+<CodeBlock
+  code={`import { TimelineConnector } from 'agent-native';
+
+// Used between manually rendered TimelineStep elements
+<TimelineConnector fillPercent={50} />`}
+  lang="tsx"
+/>
+
+<PropsTable
+  props={[
+    { name: "fillPercent", type: "number", default: "0", description: "Fill percentage (0-100). Controls the height of the inner fill element." },
+    { name: "className", type: "string", description: "Additional class on the connector root element." },
+  ]}
+/>
+
+<Callout variant="info">
+  The standalone TimelineConnector is not used by AgentTimeline internally. It exists for custom layouts where you compose TimelineStep and TimelineConnector yourself. For most use cases, the automatic `::before` connectors in AgentTimeline are the right approach.
+</Callout>

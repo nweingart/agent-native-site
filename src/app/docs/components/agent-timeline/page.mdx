@@ -178,7 +178,6 @@ Override every element with Tailwind classes via the `classNames` prop:
     step: "rounded-lg px-3 py-2 hover:bg-zinc-800/50 transition-colors",
     indicator: "ring-2 ring-zinc-600",
     stepBody: "ml-3",
-    connector: "bg-zinc-700",
   }}
 />`}
   lang="tsx"
@@ -248,7 +247,7 @@ Replace the default step body or status indicator with your own renderers:
     { key: "step", target: "Each step row" },
     { key: "indicator", target: "Status circle (spinner, checkmark, etc.)" },
     { key: "stepBody", target: "Label + description + elapsed time area" },
-    { key: "connector", target: "Vertical line between steps" },
+    { key: "connector", target: "Standalone TimelineConnector (custom layouts only)" },
     { key: "tier", target: "Parallel group container" },
     { key: "tierHeader", target: "Header above parallel group" },
     { key: "approval", target: "Approval gate box" },

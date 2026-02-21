@@ -12,7 +12,6 @@ export function TimelineTailwind() {
         step: "rounded-lg px-3 py-2 hover:bg-zinc-800/50 transition-colors",
         indicator: "ring-2 ring-zinc-600",
         stepBody: "ml-3",
-        connector: "bg-zinc-700",
       }}
     />
   );
