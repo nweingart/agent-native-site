@@ -1,0 +1,706 @@
+[
+  {
+    "title": "AgentHandoff",
+    "description": "Visualize multi-agent delegation chains. Shows agent cards connected by handoff arrows, with status indicators and optional inline step display.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Horizontal Layout",
+      "With Inline Steps",
+      "Props",
+      "HandoffEvent Type",
+      "classNames",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/agent-handoff",
+    "section": "Components"
+  },
+  {
+    "title": "AgentStatusBar",
+    "description": "Compact horizontal bar showing agent state plus optional metrics — tokens, elapsed time, cost, and model name. Only sections with data render.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Minimal Configurations",
+      "Clickable Status",
+      "Props",
+      "classNames",
+      "CSS Classes",
+      "Data Attributes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/agent-status-bar",
+    "section": "Components"
+  },
+  {
+    "title": "AgentTimeline",
+    "description": "A vertical timeline component for rendering AI agent workflows with real-time status updates, parallel execution tiers, and human-in-the-loop approval gates.",
+    "headings": [
+      "Preview",
+      "Installation",
+      "Basic Usage",
+      "Examples",
+      "Parallel Tiers",
+      "Approval Gate",
+      "Elapsed Time",
+      "Tool Calls",
+      "Tailwind Styling",
+      "Custom Render Slots",
+      "Props",
+      "classNames",
+      "Compound Subcomponents",
+      "Data Attributes",
+      "Accessibility"
+    ],
+    "href": "/docs/components/agent-timeline",
+    "section": "Components"
+  },
+  {
+    "title": "Connectors",
+    "description": "Vertical lines drawn between steps to show sequential flow. AgentTimeline renders connectors automatically using CSS pseudo-elements — no extra components needed. The connector color follows each step",
+    "headings": [
+      "Preview",
+      "How It Works",
+      "Progress Animation",
+      "Disabling Connectors",
+      "CSS Classes",
+      "Customizing Connector Appearance",
+      "Standalone TimelineConnector"
+    ],
+    "href": "/docs/components/timeline-connector",
+    "section": "Components"
+  },
+  {
+    "title": "ContextBudget",
+    "description": "Token budget meter showing context window usage. Visualizes input tokens, output tokens, system prompt, cache, and remaining capacity as a stacked bar or ring chart.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Warning Threshold",
+      "Danger Threshold",
+      "Ring Layout",
+      "Props",
+      "classNames",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/context-budget",
+    "section": "Components"
+  },
+  {
+    "title": "CostTracker",
+    "description": "Running tally of API costs per model and per call. Shows a summary bar with total cost and model breakdowns, plus a detailed table of individual API calls.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Ungrouped",
+      "Summary Only",
+      "Props",
+      "classNames",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/cost-tracker",
+    "section": "Components"
+  },
+  {
+    "title": "DiffViewer",
+    "description": "Unified or side-by-side code diff renderer. Renders `DiffFile` data with colored line backgrounds, line numbers, hunk headers, and file status badges.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Added File",
+      "No Header + Max Height",
+      "Props",
+      "classNames",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/diff-viewer",
+    "section": "Components"
+  },
+  {
+    "title": "PermissionBadges",
+    "description": "Show what tools and permissions an agent has access to. Renders granted permissions with green check badges and denied permissions with red X badges.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Category Grouping",
+      "Granted Only",
+      "Grid Layout",
+      "Props",
+      "classNames",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/permission-badges",
+    "section": "Components"
+  },
+  {
+    "title": "StreamingText",
+    "description": "Token-by-token text renderer with a blinking cursor. Shows LLM output as it arrives, with optional simulated typing animation for demos.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Cursor Styles",
+      "Simulated Typing",
+      "Props",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/streaming-text",
+    "section": "Components"
+  },
+  {
+    "title": "TaskTree",
+    "description": "Nested tree of tasks and subtasks with status indicators, expand/collapse, and optional connector lines. Visualize how an agent decomposes work into hierarchical steps.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Auto-Expanding Running Tasks",
+      "Default Collapsed",
+      "Props",
+      "TaskNode Type",
+      "classNames",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/task-tree",
+    "section": "Components"
+  },
+  {
+    "title": "TerminalOutput",
+    "description": "Streaming terminal/log output renderer with ANSI color support, auto-scroll, line numbers, and collapsible regions. Always renders with a dark terminal theme regardless of the app's color scheme.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Build Output",
+      "Collapsible",
+      "Props",
+      "classNames",
+      "CSS Classes",
+      "ANSI Support",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/terminal-output",
+    "section": "Components"
+  },
+  {
+    "title": "ThinkingIndicator",
+    "description": "Visual indicator for the \"model is reasoning\" phase — distinct from a loading spinner. Uses `useVisualMemory` for smooth enter/exit transitions.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Animation Variants",
+      "Custom Labels",
+      "Props",
+      "CSS Classes",
+      "Accessibility",
+      "Related"
+    ],
+    "href": "/docs/components/thinking-indicator",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineApprovalGate",
+    "description": "A human-in-the-loop approval prompt. Renders a title, optional description, and Approve/Reject buttons. Used by AgentTimeline when you pass the `approvalRequest` prop, or standalone for custom approva",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Interactive Approval",
+      "Minimal (No Buttons)",
+      "Custom Styling",
+      "Using with AgentTimeline",
+      "Props",
+      "CSS Classes",
+      "Data Attributes",
+      "ApprovalRequest Type",
+      "Accessibility"
+    ],
+    "href": "/docs/components/timeline-approval-gate",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineArtifact",
+    "description": "Renders a single artifact produced by an agent step — a file, code snippet, diff, or other output. Displays a kind badge and title, with expandable content. Used inside TimelineToolCallList to show st",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Different Kinds",
+      "Custom Renderer",
+      "Props",
+      "CSS Classes",
+      "Data Attributes"
+    ],
+    "href": "/docs/components/timeline-artifact",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineStep",
+    "description": "The core building block of AgentTimeline. Renders a single step with a status indicator, label, optional description, and elapsed time. Use it standalone when you need individual step rows outside of ",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "All Status States",
+      "Clickable Steps",
+      "Elapsed Time",
+      "Custom Renderers",
+      "Props",
+      "CSS Classes",
+      "Data Attributes",
+      "Accessibility"
+    ],
+    "href": "/docs/components/timeline-step",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineSummary",
+    "description": "Renders status count badges for a set of steps. Shows at a glance how many steps are complete, running, errored, or pending. Useful as a header or footer for your timeline.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Mixed Status",
+      "All Complete",
+      "Interactive",
+      "Common Patterns",
+      "Timeline Header",
+      "Dashboard Widget",
+      "Props",
+      "CSS Classes",
+      "Display Order"
+    ],
+    "href": "/docs/components/timeline-summary",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineTier",
+    "description": "Groups multiple steps that execute in parallel. Renders them inside a bordered container with a header showing the tier label and a \"N parallel\" badge. Used by AgentTimeline when you pass the `tiers` ",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "CI Pipeline",
+      "With Elapsed Time",
+      "Custom Header",
+      "Using with AgentTimeline",
+      "Props",
+      "CSS Classes",
+      "Data Attributes",
+      "StepTier Type"
+    ],
+    "href": "/docs/components/timeline-tier",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineToolCall",
+    "description": "Renders a single tool call with its name, status indicator, and optional expandable input/output details. Used inside TimelineStep when `showToolCalls` is enabled.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Status States",
+      "With Elapsed Time",
+      "Custom Renderer",
+      "Props",
+      "CSS Classes",
+      "Data Attributes"
+    ],
+    "href": "/docs/components/timeline-tool-call",
+    "section": "Components"
+  },
+  {
+    "title": "TimelineToolCallList",
+    "description": "Renders a collapsible list of tool calls and artifacts for a step. Automatically expands when a tool call is in the `running` state. Used internally by TimelineStep when `showToolCalls` is enabled.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Basic Usage",
+      "Examples",
+      "Auto-Expand on Running",
+      "With Artifacts",
+      "Props",
+      "CSS Classes"
+    ],
+    "href": "/docs/components/timeline-tool-call-list",
+    "section": "Components"
+  },
+  {
+    "title": "classNames",
+    "description": "Every agent-native component accepts a `classNames` prop for targeted styling of internal elements.",
+    "headings": [
+      "How It Works",
+      "Component Reference",
+      "AgentTimeline",
+      "StreamingText",
+      "ThinkingIndicator",
+      "AgentStatusBar",
+      "DiffViewer",
+      "TerminalOutput",
+      "TaskTree",
+      "AgentHandoff",
+      "ContextBudget",
+      "CostTracker",
+      "PermissionBadges",
+      "Tailwind Examples"
+    ],
+    "href": "/docs/customization/class-names",
+    "section": "Customization"
+  },
+  {
+    "title": "CSS Variables",
+    "description": "Every visual token in agent-native is controlled by a CSS custom property prefixed with `--an-`. This prefix avoids collisions with your app's own variables and makes it easy to identify which propert",
+    "headings": [
+      "Surfaces",
+      "Text",
+      "Status Colors",
+      "Foreground",
+      "Background",
+      "Typography",
+      "Spacing",
+      "Borders & Radius",
+      "Shadows & Glows",
+      "Budget Colors",
+      "Diff Colors",
+      "Animation",
+      "Dark Mode",
+      "Overriding Variables",
+      "Match your brand colors",
+      "Use your app's surface colors",
+      "Use a custom font",
+      "Tighten up spacing",
+      "Disable animations",
+      "Scope overrides to a container",
+      "Related"
+    ],
+    "href": "/docs/customization/css-variables",
+    "section": "Customization"
+  },
+  {
+    "title": "Data Attributes",
+    "description": "All agent-native components emit semantic `data-*` attributes on their DOM elements. Use them for CSS targeting, Tailwind modifiers, and test selectors.",
+    "headings": [
+      "AgentTimeline",
+      "DiffViewer",
+      "AgentStatusBar",
+      "AgentHandoff",
+      "TerminalOutput",
+      "ContextBudget",
+      "CostTracker",
+      "PermissionBadges",
+      "CSS Targeting",
+      "Tailwind Data Attributes",
+      "Testing"
+    ],
+    "href": "/docs/customization/data-attributes",
+    "section": "Customization"
+  },
+  {
+    "title": "Render Slots",
+    "description": "Render props let you replace specific parts of a component's UI while keeping the rest of the layout, state management, and behavior intact. Instead of rebuilding an entire component from scratch, you",
+    "headings": [
+      "AgentTimeline Slots",
+      "renderStepContent",
+      "renderStepIndicator",
+      "renderTierHeader",
+      "renderToolContent",
+      "renderArtifactContent",
+      "TaskTree Slots",
+      "renderNodeContent",
+      "Combining Slots"
+    ],
+    "href": "/docs/customization/render-slots",
+    "section": "Customization"
+  },
+  {
+    "title": "Installation",
+    "description": "Get agent-native installed and ready to use in under a minute.",
+    "headings": [
+      "Install the package",
+      "Import styles",
+      "Entry points",
+      "TypeScript",
+      "Next steps"
+    ],
+    "href": "/docs/getting-started/installation",
+    "section": "Getting Started"
+  },
+  {
+    "title": "Quick Start",
+    "description": "Build a working agent timeline in 10 seconds.",
+    "headings": [
+      "The minimal example",
+      "Live result",
+      "The step data structure",
+      "Status types",
+      "Wiring to real data",
+      "Next steps"
+    ],
+    "href": "/docs/getting-started/quick-start",
+    "section": "Getting Started"
+  },
+  {
+    "title": "Tailwind Integration",
+    "description": "agent-native plays nicely with Tailwind CSS. Three modes, from easiest to most custom.",
+    "headings": [
+      "Mode 1: Use our styles as-is",
+      "Mode 2: Override with classNames",
+      "Mode 3: Go fully custom",
+      "Why it just works",
+      "Data attribute selectors",
+      "Next steps"
+    ],
+    "href": "/docs/getting-started/tailwind",
+    "section": "Getting Started"
+  },
+  {
+    "title": "Theming & Dark Mode",
+    "description": "agent-native uses CSS custom properties for all visual tokens. Override them to match your app's design system.",
+    "headings": [
+      "Dark mode",
+      "CSS variables overview",
+      "Surfaces",
+      "Status colors",
+      "Typography",
+      "Overriding tokens",
+      "Layer architecture",
+      "Next steps"
+    ],
+    "href": "/docs/getting-started/theming",
+    "section": "Getting Started"
+  },
+  {
+    "title": "useAgentSteps",
+    "description": "A reducer-based hook that manages agent timeline state. Accepts `AgentEvent` dispatches and returns ready-to-spread `props` for `AgentTimeline`. Handles step creation, tool call tracking, tier managem",
+    "headings": [
+      "Preview",
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Examples",
+      "Manual Dispatch",
+      "With Tool Calls",
+      "Options",
+      "Return Value",
+      "How It Works",
+      "AgentEvent Types"
+    ],
+    "href": "/docs/hooks/use-agent-steps",
+    "section": "Hooks"
+  },
+  {
+    "title": "useAgentStream",
+    "description": "Connects to an NDJSON event stream and drives an `AgentTimeline` automatically. Combines `useAgentSteps` with a streaming fetch, returning ready-to-spread `props` plus connection status and reconnecti",
+    "headings": [
+      "Preview",
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Examples",
+      "With Auth Headers",
+      "Conditional Streaming",
+      "Options",
+      "Return Value",
+      "How It Works"
+    ],
+    "href": "/docs/hooks/use-agent-stream",
+    "section": "Hooks"
+  },
+  {
+    "title": "useAutoScroll",
+    "description": "Returns a ref for a scrollable container. Automatically scrolls to the bottom when the trigger value changes — but backs off when the user scrolls up, and re-engages when they scroll back down. Used i",
+    "headings": [
+      "Preview",
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Examples",
+      "Interactive Demo",
+      "With AgentTimeline",
+      "Custom Scroll Behavior",
+      "Options",
+      "Return Value",
+      "Behavior"
+    ],
+    "href": "/docs/hooks/use-auto-scroll",
+    "section": "Hooks"
+  },
+  {
+    "title": "useElapsedTime",
+    "description": "Returns a live-updating formatted time string. Counts up while running and freezes when completed. Used internally by TimelineStep for elapsed time display.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Examples",
+      "Interactive Timer",
+      "Multiple Timers",
+      "Output Format",
+      "Parameters",
+      "Return Value",
+      "Behavior"
+    ],
+    "href": "/docs/hooks/use-elapsed-time",
+    "section": "Hooks"
+  },
+  {
+    "title": "useReducedMotion",
+    "description": "Returns `true` when the user has `prefers-reduced-motion: reduce` enabled. Reactive — updates instantly if the preference changes at runtime. SSR-safe.",
+    "headings": [
+      "Preview",
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Examples",
+      "Motion Preference Detection",
+      "Conditional Animation",
+      "Disabling Transitions",
+      "With useVisualMemory",
+      "Return Value",
+      "How It Works",
+      "Internal Usage"
+    ],
+    "href": "/docs/hooks/use-reduced-motion",
+    "section": "Hooks"
+  },
+  {
+    "title": "useStreamingText",
+    "description": "Manages displayed text for streaming output. In instant mode (default), `displayedText` always equals `content`. With `typingSpeed` set, it animates character-by-character using `requestAnimationFrame",
+    "headings": [
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Simulated Typing",
+      "Options",
+      "Return Value",
+      "Related"
+    ],
+    "href": "/docs/hooks/use-streaming-text",
+    "section": "Hooks"
+  },
+  {
+    "title": "useVisualMemory",
+    "description": "Tracks value transitions and exposes animated progress so your UI can blend between states. Used internally by TimelineStep to smoothly morph status indicators (spinner to checkmark, dot to spinner, e",
+    "headings": [
+      "Preview",
+      "Import",
+      "Signature",
+      "Basic Usage",
+      "Examples",
+      "Status Transitions",
+      "Easing Comparison",
+      "Options",
+      "Return Value",
+      "How It Works",
+      "Use Cases"
+    ],
+    "href": "/docs/hooks/use-visual-memory",
+    "section": "Hooks"
+  },
+  {
+    "title": "Changelog",
+    "description": "All notable changes to agent-native.",
+    "headings": [
+      "v0.4.0",
+      "v0.3.0",
+      "v0.2.0",
+      "v0.1.0"
+    ],
+    "href": "/docs/changelog",
+    "section": "Resources"
+  },
+  {
+    "title": "FAQ & Troubleshooting",
+    "description": "Common questions and solutions for agent-native.",
+    "headings": [
+      "Styles aren't showing up",
+      "Dark mode isn't working",
+      "Tailwind classes aren't overriding library styles",
+      "TypeScript can't find the module",
+      "Auto-scroll isn't working",
+      "SSR / Server Components",
+      "Bundle size",
+      "className vs classNames"
+    ],
+    "href": "/docs/faq",
+    "section": "Resources"
+  },
+  {
+    "title": "Type Reference",
+    "description": "All TypeScript types exported by `agent-native`. Import them from the package root:",
+    "headings": [
+      "Core Types",
+      "StepStatus",
+      "AgentStep",
+      "StepTier",
+      "ApprovalRequest",
+      "Tool & Artifact Types",
+      "ToolCall",
+      "ArtifactKind",
+      "Artifact",
+      "Token & Cost Types",
+      "TokenUsage",
+      "CostBreakdown",
+      "CostEntry",
+      "ContextBudgetData",
+      "Diff Types",
+      "DiffLineType",
+      "DiffLine",
+      "DiffHunk",
+      "DiffFile",
+      "Agent Types",
+      "AgentStatus",
+      "SubAgent",
+      "HandoffEvent",
+      "AgentEvent",
+      "Other Types",
+      "TaskNode",
+      "Message",
+      "Finding",
+      "Citation",
+      "Permission",
+      "FeedbackPayload"
+    ],
+    "href": "/docs/types/reference",
+    "section": "Types"
+  }
+]

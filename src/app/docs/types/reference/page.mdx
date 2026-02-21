@@ -1,0 +1,428 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# Type Reference
+
+All TypeScript types exported by `agent-native`. Import them from the package root:
+
+<CodeBlock
+  code={`import type { AgentStep, StepStatus, ToolCall, Artifact } from "agent-native";`}
+  lang="typescript"
+/>
+
+---
+
+## Core Types
+
+### StepStatus
+
+<CodeBlock
+  code={`type StepStatus =
+  | 'pending'
+  | 'running'
+  | 'streaming'
+  | 'waiting_approval'
+  | 'complete'
+  | 'error'
+  | 'skipped'
+  | 'cancelled';`}
+  lang="typescript"
+/>
+
+Union of all possible step lifecycle states. Used by `AgentStep`, `TaskNode`, and reflected in `data-status` attributes.
+
+### AgentStep
+
+<CodeBlock
+  code={`interface AgentStep {
+  id: string;
+  label: string;
+  status: StepStatus;
+  description?: string;
+  startedAt?: number;
+  completedAt?: number;
+  toolCalls?: ToolCall[];
+  artifacts?: Artifact[];
+  tokenUsage?: TokenUsage;
+  error?: string;
+  metadata?: Record<string, unknown>;
+}`}
+  lang="typescript"
+/>
+
+- **id** — Unique identifier for the step
+- **label** — Display name shown in the timeline
+- **status** — Current lifecycle state
+- **toolCalls** — Tool invocations within this step
+- **artifacts** — Files, code, or other outputs produced
+- **tokenUsage** — Token consumption for this step
+- **metadata** — Arbitrary key-value data for your app
+
+### StepTier
+
+<CodeBlock
+  code={`interface StepTier {
+  id: string;
+  label?: string;
+  stepIds: string[];
+  startedAt?: number;
+  completedAt?: number;
+}`}
+  lang="typescript"
+/>
+
+Groups steps that execute in parallel. The `stepIds` array references `AgentStep.id` values.
+
+### ApprovalRequest
+
+<CodeBlock
+  code={`interface ApprovalRequest {
+  id: string;
+  stepId: string;
+  title: string;
+  description?: string;
+  toolCall?: ToolCall;
+  createdAt: number;
+  expiresAt?: number;
+}`}
+  lang="typescript"
+/>
+
+Represents a human-in-the-loop approval gate. Links to a step and optionally to the tool call requiring approval.
+
+---
+
+## Tool & Artifact Types
+
+### ToolCall
+
+<CodeBlock
+  code={`interface ToolCall {
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+  output?: unknown;
+  status: 'pending' | 'running' | 'complete' | 'error';
+  startedAt?: number;
+  completedAt?: number;
+  error?: string;
+}`}
+  lang="typescript"
+/>
+
+- **name** — Tool/function name (e.g. `"search"`, `"edit_file"`)
+- **input** — Arguments passed to the tool
+- **output** — Return value (populated on completion)
+- **error** — Error message if the tool failed
+
+### ArtifactKind
+
+<CodeBlock
+  code={`type ArtifactKind = 'code' | 'file' | 'diff' | 'image' | 'text' | 'json' | 'markdown';`}
+  lang="typescript"
+/>
+
+### Artifact
+
+<CodeBlock
+  code={`interface Artifact {
+  id: string;
+  kind: ArtifactKind;
+  title?: string;
+  content: string;
+  language?: string;
+  metadata?: Record<string, unknown>;
+}`}
+  lang="typescript"
+/>
+
+- **kind** — Determines how the artifact is rendered
+- **content** — The artifact body (code string, markdown, JSON, etc.)
+- **language** — Programming language for syntax highlighting (when `kind` is `"code"`)
+
+---
+
+## Token & Cost Types
+
+### TokenUsage
+
+<CodeBlock
+  code={`interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+}`}
+  lang="typescript"
+/>
+
+### CostBreakdown
+
+<CodeBlock
+  code={`interface CostBreakdown {
+  totalCost: number;
+  model: string;
+  tokenUsage: TokenUsage;
+  currency?: string;
+}`}
+  lang="typescript"
+/>
+
+### CostEntry
+
+<CodeBlock
+  code={`interface CostEntry {
+  id: string;
+  model: string;
+  cost: number;
+  inputTokens: number;
+  outputTokens: number;
+  timestamp: number;
+  label?: string;
+}`}
+  lang="typescript"
+/>
+
+Used by the `CostTracker` component. Each entry represents a single API call with its cost and token breakdown.
+
+### ContextBudgetData
+
+<CodeBlock
+  code={`interface ContextBudgetData {
+  maxTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  systemTokens?: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+}`}
+  lang="typescript"
+/>
+
+Used by the `ContextBudget` component to visualize token consumption against the model's context window.
+
+---
+
+## Diff Types
+
+### DiffLineType
+
+<CodeBlock
+  code={`type DiffLineType = 'add' | 'remove' | 'context';`}
+  lang="typescript"
+/>
+
+### DiffLine
+
+<CodeBlock
+  code={`interface DiffLine {
+  type: DiffLineType;
+  content: string;
+  oldLineNumber?: number;
+  newLineNumber?: number;
+}`}
+  lang="typescript"
+/>
+
+### DiffHunk
+
+<CodeBlock
+  code={`interface DiffHunk {
+  header: string;
+  lines: DiffLine[];
+  oldStart: number;
+  oldCount: number;
+  newStart: number;
+  newCount: number;
+}`}
+  lang="typescript"
+/>
+
+### DiffFile
+
+<CodeBlock
+  code={`interface DiffFile {
+  oldPath: string;
+  newPath: string;
+  hunks: DiffHunk[];
+  status: 'added' | 'modified' | 'deleted' | 'renamed';
+  language?: string;
+}`}
+  lang="typescript"
+/>
+
+- **status** — File-level change type
+- **hunks** — Array of contiguous change regions
+- **language** — For syntax-aware rendering
+
+---
+
+## Agent Types
+
+### AgentStatus
+
+<CodeBlock
+  code={`type AgentStatus = 'idle' | 'thinking' | 'acting' | 'waiting' | 'error' | 'complete';`}
+  lang="typescript"
+/>
+
+Used by `AgentStatusBar`. Reflects the agent's high-level state.
+
+### SubAgent
+
+<CodeBlock
+  code={`interface SubAgent {
+  id: string;
+  name: string;
+  status: 'idle' | 'running' | 'complete' | 'error';
+  task?: string;
+  steps?: AgentStep[];
+  startedAt?: number;
+  completedAt?: number;
+}`}
+  lang="typescript"
+/>
+
+Used by `AgentHandoff`. Represents an agent in a multi-agent workflow.
+
+### HandoffEvent
+
+<CodeBlock
+  code={`interface HandoffEvent {
+  id: string;
+  fromAgentId: string;
+  toAgentId: string;
+  task?: string;
+  timestamp: number;
+}`}
+  lang="typescript"
+/>
+
+### AgentEvent
+
+<CodeBlock
+  code={`type AgentEvent =
+  | { type: 'step.started'; step: Pick<AgentStep, 'id' | 'label'> & Partial<AgentStep> }
+  | { type: 'step.updated'; stepId: string; fields: Partial<AgentStep> }
+  | { type: 'step.completed'; stepId: string; status?: 'complete' | 'error' | 'skipped' | 'cancelled'; error?: string }
+  | { type: 'tool.started'; stepId: string; toolCall: Pick<ToolCall, 'id' | 'name' | 'input'> }
+  | { type: 'tool.updated'; stepId: string; toolCallId: string; fields: Partial<ToolCall> }
+  | { type: 'tool.completed'; stepId: string; toolCallId: string; output?: unknown; error?: string }
+  | { type: 'tier.started'; tier: Pick<StepTier, 'id' | 'stepIds'> & Partial<StepTier> }
+  | { type: 'tier.completed'; tierId: string }
+  | { type: 'approval.requested'; request: ApprovalRequest }
+  | { type: 'approval.resolved'; requestId: string; decision: 'approved' | 'rejected' }
+  | { type: 'artifact.added'; stepId: string; artifact: Artifact }
+  | { type: 'reset' };`}
+  lang="typescript"
+/>
+
+Discriminated union for event-driven updates. Use with `useAgentStream` to process real-time agent events from SSE or WebSocket connections.
+
+<Callout variant="tip">
+  The `type` field acts as the discriminant — TypeScript will narrow the union automatically in a `switch` statement.
+</Callout>
+
+---
+
+## Other Types
+
+### TaskNode
+
+<CodeBlock
+  code={`interface TaskNode {
+  id: string;
+  label: string;
+  status: StepStatus;
+  description?: string;
+  children?: TaskNode[];
+  startedAt?: number;
+  completedAt?: number;
+  error?: string;
+  metadata?: Record<string, unknown>;
+}`}
+  lang="typescript"
+/>
+
+Recursive tree structure for the `TaskTree` component. Each node can have nested `children`.
+
+### Message
+
+<CodeBlock
+  code={`type MessageRole = 'user' | 'assistant' | 'system' | 'tool';
+
+interface Message {
+  id: string;
+  role: MessageRole;
+  content: string;
+  toolCalls?: ToolCall[];
+  artifacts?: Artifact[];
+  tokenUsage?: TokenUsage;
+  timestamp?: number;
+  metadata?: Record<string, unknown>;
+}`}
+  lang="typescript"
+/>
+
+### Finding
+
+<CodeBlock
+  code={`type FindingSeverity = 'info' | 'warning' | 'error' | 'critical';
+
+interface Finding {
+  id: string;
+  severity: FindingSeverity;
+  message: string;
+  filePath?: string;
+  line?: number;
+  column?: number;
+  rule?: string;
+  suggestion?: string;
+}`}
+  lang="typescript"
+/>
+
+For code review findings. `filePath`, `line`, and `column` pinpoint the location.
+
+### Citation
+
+<CodeBlock
+  code={`interface Citation {
+  id: string;
+  label: string;
+  url?: string;
+  filePath?: string;
+  line?: number;
+  snippet?: string;
+}`}
+  lang="typescript"
+/>
+
+### Permission
+
+<CodeBlock
+  code={`interface Permission {
+  id: string;
+  name: string;
+  description?: string;
+  granted: boolean;
+  category?: string;
+}`}
+  lang="typescript"
+/>
+
+Used by the `PermissionBadges` component. `category` groups related permissions together.
+
+### FeedbackPayload
+
+<CodeBlock
+  code={`interface FeedbackPayload {
+  type: 'thumbs_up' | 'thumbs_down' | 'comment' | 'correction';
+  targetId: string;
+  message?: string;
+  metadata?: Record<string, unknown>;
+}`}
+  lang="typescript"
+/>
+
+For collecting user feedback on agent outputs. `targetId` references the step or message being rated.

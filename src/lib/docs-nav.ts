@@ -31,6 +31,16 @@ export const docsNav: NavSection[] = [
       { title: "TimelineToolCall", href: "/docs/components/timeline-tool-call" },
       { title: "TimelineToolCallList", href: "/docs/components/timeline-tool-call-list" },
       { title: "TimelineArtifact", href: "/docs/components/timeline-artifact" },
+      { title: "StreamingText", href: "/docs/components/streaming-text" },
+      { title: "ThinkingIndicator", href: "/docs/components/thinking-indicator" },
+      { title: "AgentStatusBar", href: "/docs/components/agent-status-bar" },
+      { title: "DiffViewer", href: "/docs/components/diff-viewer" },
+      { title: "TerminalOutput", href: "/docs/components/terminal-output" },
+      { title: "TaskTree", href: "/docs/components/task-tree" },
+      { title: "AgentHandoff", href: "/docs/components/agent-handoff" },
+      { title: "ContextBudget", href: "/docs/components/context-budget" },
+      { title: "CostTracker", href: "/docs/components/cost-tracker" },
+      { title: "PermissionBadges", href: "/docs/components/permission-badges" },
     ],
   },
   {
@@ -42,21 +52,29 @@ export const docsNav: NavSection[] = [
       { title: "useReducedMotion", href: "/docs/hooks/use-reduced-motion" },
       { title: "useAgentSteps", href: "/docs/hooks/use-agent-steps" },
       { title: "useAgentStream", href: "/docs/hooks/use-agent-stream" },
+      { title: "useStreamingText", href: "/docs/hooks/use-streaming-text" },
     ],
   },
   {
     title: "Types",
     items: [
-      { title: "Reference", href: "/docs/types/reference", disabled: true },
+      { title: "Reference", href: "/docs/types/reference" },
     ],
   },
   {
     title: "Customization",
     items: [
-      { title: "CSS Variables", href: "/docs/customization/css-variables", disabled: true },
-      { title: "classNames", href: "/docs/customization/class-names", disabled: true },
-      { title: "Render Slots", href: "/docs/customization/render-slots", disabled: true },
-      { title: "Data Attributes", href: "/docs/customization/data-attributes", disabled: true },
+      { title: "CSS Variables", href: "/docs/customization/css-variables" },
+      { title: "classNames", href: "/docs/customization/class-names" },
+      { title: "Render Slots", href: "/docs/customization/render-slots" },
+      { title: "Data Attributes", href: "/docs/customization/data-attributes" },
+    ],
+  },
+  {
+    title: "Resources",
+    items: [
+      { title: "Changelog", href: "/docs/changelog" },
+      { title: "FAQ", href: "/docs/faq" },
     ],
   },
 ];

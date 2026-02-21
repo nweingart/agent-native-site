@@ -6,56 +6,64 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { clsx } from "clsx";
 import { docsNav } from "@/lib/docs-nav";
+import { SearchTrigger } from "@/components/SearchTrigger";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const nav = (
-    <nav className="space-y-6 py-6 px-4">
+    <nav className="flex flex-col h-full py-6 px-4">
       <Link
         href="/"
         className="block text-sm font-semibold text-foreground mb-6 hover:text-muted transition-colors"
       >
         agent-native
       </Link>
-      {docsNav.map((section) => (
-        <div key={section.title}>
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-2">
-            {section.title}
-          </h4>
-          <ul className="space-y-0.5">
-            {section.items.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <li key={item.href}>
-                  {item.disabled ? (
-                    <span className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground/50 cursor-not-allowed">
-                      {item.title}
-                      <span className="text-[10px] bg-surface-2 rounded px-1.5 py-0.5">
-                        Soon
+      <SearchTrigger />
+      <div className="flex-1 space-y-6 overflow-y-auto">
+        {docsNav.map((section) => (
+          <div key={section.title}>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-2">
+              {section.title}
+            </h4>
+            <ul className="space-y-0.5">
+              {section.items.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <li key={item.href}>
+                    {item.disabled ? (
+                      <span className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground/50 cursor-not-allowed">
+                        {item.title}
+                        <span className="text-[10px] bg-surface-2 rounded px-1.5 py-0.5">
+                          Soon
+                        </span>
                       </span>
-                    </span>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className={clsx(
-                        "block rounded-md px-2 py-1.5 text-sm transition-colors",
-                        isActive
-                          ? "bg-surface-2 text-foreground font-medium"
-                          : "text-muted hover:text-foreground hover:bg-surface-2"
-                      )}
-                    >
-                      {item.title}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className={clsx(
+                          "block rounded-md px-2 py-1.5 text-sm transition-colors",
+                          isActive
+                            ? "bg-surface-2 text-foreground font-medium"
+                            : "text-muted hover:text-foreground hover:bg-surface-2"
+                        )}
+                      >
+                        {item.title}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div className="pt-4 border-t border-border mt-4">
+        <ThemeToggle />
+      </div>
     </nav>
   );
 

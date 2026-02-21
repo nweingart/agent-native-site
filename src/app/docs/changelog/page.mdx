@@ -1,0 +1,53 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+
+# Changelog
+
+All notable changes to **agent-native**.
+
+---
+
+## v0.4.0
+
+- Added **ContextBudget** component with bar and ring layouts
+- Added **CostTracker** component with model grouping
+- Added **PermissionBadges** component with inline and grid layouts
+- Added `data-threshold` attribute to ContextBudget for warning/danger states
+- Added `cacheReadTokens` and `cacheWriteTokens` to `TokenUsage` type
+- Added `CostEntry`, `ContextBudgetData`, and `Permission` types
+
+## v0.3.0
+
+- Added **AgentHandoff** component for multi-agent workflows
+- Added **TaskTree** component with recursive node rendering
+- Added `renderNodeContent` render slot to TaskTree
+- Added `SubAgent` and `HandoffEvent` types
+- Added `TaskNode` type with recursive children
+- Added horizontal and vertical layout options to AgentHandoff
+
+## v0.2.0
+
+- Added **DiffViewer** component with unified and split views
+- Added **TerminalOutput** component with streaming support
+- Added **AgentStatusBar** component
+- Added `data-*` attributes to all components for CSS targeting and testing
+- Added `classNames` prop pattern to all components
+- Added `AgentEvent` discriminated union type for event-driven updates
+- Added `useAgentStream` hook for SSE/WebSocket integration
+- Added `DiffFile`, `DiffHunk`, `DiffLine` types
+- Added `Message`, `Finding`, `Citation` types
+
+## v0.1.0
+
+Initial release.
+
+- **AgentTimeline** with steps, tiers, approval gates, connectors, summaries
+- **TimelineStep**, **TimelineTier**, **TimelineApprovalGate**, **TimelineConnector**, **TimelineSummary**
+- **TimelineToolCall** and **TimelineToolCallList** components
+- **TimelineArtifact** component
+- **StreamingText** with cursor animation
+- **ThinkingIndicator** component
+- Hooks: `useVisualMemory`, `useAutoScroll`, `useElapsedTime`, `useReducedMotion`, `useAgentSteps`, `useStreamingText`
+- CSS custom properties with `--an-` prefix
+- `@layer agent-native` architecture for zero-specificity defaults
+- Dark mode via `.dark` or `.an-dark` class
+- Full TypeScript support with exported types

@@ -1,0 +1,425 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# CSS Variables
+
+Every visual token in agent-native is controlled by a CSS custom property prefixed with `--an-`. This prefix avoids collisions with your app's own variables and makes it easy to identify which properties belong to the library.
+
+All component styles are wrapped in `@layer agent-native`, which means your overrides automatically win without `!important` or specificity gymnastics. Simply re-declare any `--an-*` variable in your own CSS and the change propagates everywhere.
+
+<Callout variant="info">
+  The `@layer agent-native` architecture means all library styles sit in a lower-priority cascade layer. Your unlayered CSS, Tailwind utilities, and inline styles all take precedence automatically. You never need `!important` to override anything.
+</Callout>
+
+---
+
+## Surfaces
+
+Four surface levels provide depth and layering for backgrounds, cards, and panels.
+
+<CodeBlock
+  code={`:root {
+  --an-surface-0: #ffffff;  /* Base background */
+  --an-surface-1: #f8f9fa;  /* Subtle background */
+  --an-surface-2: #f1f3f5;  /* Muted background */
+  --an-surface-3: #e9ecef;  /* Border-like background */
+}`}
+  lang="css"
+/>
+
+`--an-surface-0` is the primary background for components like `AgentTimeline` and `DiffViewer`. The higher numbers provide progressively more contrast for nested elements, headers, and inset regions.
+
+---
+
+## Text
+
+Three levels of text emphasis plus an inverse variant for use on dark backgrounds.
+
+<CodeBlock
+  code={`:root {
+  --an-text-primary: #212529;    /* Headings, body copy */
+  --an-text-secondary: #868e96;  /* Supporting text, labels */
+  --an-text-tertiary: #adb5bd;   /* Placeholder, disabled */
+  --an-text-inverse: #ffffff;    /* Text on dark/colored backgrounds */
+}`}
+  lang="css"
+/>
+
+---
+
+## Status Colors
+
+Status colors are central to agent-native. Each status has a foreground color (for text, icons, and borders) and a background color (for tinted surfaces and badges).
+
+### Foreground
+
+<CodeBlock
+  code={`:root {
+  --an-status-pending: #868e96;
+  --an-status-running: #339af0;
+  --an-status-streaming: #339af0;
+  --an-status-complete: #51cf66;
+  --an-status-error: #ff6b6b;
+  --an-status-warning: #fcc419;
+  --an-status-approval: #cc5de8;
+  --an-status-skipped: #adb5bd;
+  --an-status-cancelled: #adb5bd;
+}`}
+  lang="css"
+/>
+
+### Background
+
+Each status also has a light-tinted background used for badges, step highlights, and notification areas.
+
+<CodeBlock
+  code={`:root {
+  --an-status-pending-bg: #f1f3f5;
+  --an-status-running-bg: #e7f5ff;
+  --an-status-streaming-bg: #e7f5ff;
+  --an-status-complete-bg: #ebfbee;
+  --an-status-error-bg: #fff5f5;
+  --an-status-warning-bg: #fff9db;
+  --an-status-approval-bg: #f8f0fc;
+  --an-status-skipped-bg: #f1f3f5;
+  --an-status-cancelled-bg: #f1f3f5;
+}`}
+  lang="css"
+/>
+
+<Callout variant="tip">
+  When overriding a status color, remember to update both the foreground and background variants so badges and highlights stay visually coherent.
+</Callout>
+
+---
+
+## Typography
+
+Font families and a modular size scale used across all components.
+
+<CodeBlock
+  code={`:root {
+  /* Font families */
+  --an-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --an-font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+
+  /* Font sizes */
+  --an-font-size-xs: 0.75rem;    /* 12px — badges, fine print */
+  --an-font-size-sm: 0.8125rem;  /* 13px — secondary text */
+  --an-font-size-base: 0.875rem; /* 14px — body text */
+  --an-font-size-md: 1rem;       /* 16px — emphasized text */
+  --an-font-size-lg: 1.125rem;   /* 18px — section headings */
+  --an-font-size-xl: 1.25rem;    /* 20px — page headings */
+}`}
+  lang="css"
+/>
+
+Override `--an-font-sans` to match your app's typeface. For example, if you use Inter:
+
+<CodeBlock
+  code={`:root {
+  --an-font-sans: 'Inter', sans-serif;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+---
+
+## Spacing
+
+An 8-step spacing scale based on `0.25rem` (4px) increments.
+
+<CodeBlock
+  code={`:root {
+  --an-space-1: 0.25rem;   /* 4px */
+  --an-space-2: 0.5rem;    /* 8px */
+  --an-space-3: 0.75rem;   /* 12px */
+  --an-space-4: 1rem;      /* 16px */
+  --an-space-5: 1.25rem;   /* 20px */
+  --an-space-6: 1.5rem;    /* 24px */
+  --an-space-7: 2rem;      /* 32px */
+  --an-space-8: 3rem;      /* 48px */
+}`}
+  lang="css"
+/>
+
+These are used for padding, gaps, and margins throughout the component library.
+
+---
+
+## Borders & Radius
+
+Border tokens control the visual containment of cards, panels, and interactive elements.
+
+<CodeBlock
+  code={`:root {
+  /* Border radius */
+  --an-radius-sm: 4px;
+  --an-radius-md: 6px;
+  --an-radius-lg: 8px;
+  --an-radius-full: 9999px;  /* Pill shape */
+
+  /* Border */
+  --an-border-width: 1px;
+  --an-border-color: #dee2e6;
+}`}
+  lang="css"
+/>
+
+---
+
+## Shadows & Glows
+
+Three elevation levels for shadows, plus colored glows that indicate active status on running, errored, or approval-pending elements.
+
+<CodeBlock
+  code={`:root {
+  /* Elevation shadows */
+  --an-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --an-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --an-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Status glows — used on focused/active elements */
+  --an-glow-running: 0 0 12px rgba(51, 154, 240, 0.3);
+  --an-glow-error: 0 0 12px rgba(255, 107, 107, 0.3);
+  --an-glow-approval: 0 0 12px rgba(204, 93, 232, 0.3);
+}`}
+  lang="css"
+/>
+
+The glow tokens are applied as `box-shadow` on components like `TimelineStep` when a step is actively running, has errored, or is awaiting approval.
+
+---
+
+## Budget Colors
+
+Used by `ContextBudget` and `CostTracker` to distinguish token usage segments.
+
+<CodeBlock
+  code={`:root {
+  --an-budget-input: #339af0;   /* Input tokens (blue) */
+  --an-budget-output: #51cf66;  /* Output tokens (green) */
+  --an-budget-system: #cc5de8;  /* System prompt tokens (purple) */
+  --an-budget-cache: #868e96;   /* Cached tokens (gray) */
+}`}
+  lang="css"
+/>
+
+---
+
+## Diff Colors
+
+Colors for code diff rendering in `DiffViewer`. Includes foreground colors for line markers and semi-transparent backgrounds for line highlighting.
+
+<CodeBlock
+  code={`:root {
+  --an-diff-add: #2ea043;
+  --an-diff-add-bg: rgba(46, 160, 67, 0.1);
+  --an-diff-remove: #f85149;
+  --an-diff-remove-bg: rgba(248, 81, 73, 0.1);
+  --an-diff-hunk-bg: rgba(51, 154, 240, 0.08);
+}`}
+  lang="css"
+/>
+
+---
+
+## Animation
+
+Duration and easing tokens for consistent motion across all components.
+
+<CodeBlock
+  code={`:root {
+  /* Durations */
+  --an-duration-fast: 150ms;     /* Micro-interactions: hover, focus */
+  --an-duration-normal: 300ms;   /* Standard transitions */
+  --an-duration-slow: 500ms;     /* Entrance/exit animations */
+
+  /* Easing curves */
+  --an-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --an-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --an-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+}`}
+  lang="css"
+/>
+
+<Callout variant="info">
+  To reduce or disable animations globally, override the duration tokens. Setting all three to `0ms` effectively disables transitions. The library also respects `prefers-reduced-motion` via the `useReducedMotion` hook.
+</Callout>
+
+---
+
+## Dark Mode
+
+Dark mode activates when either `.dark` (the Tailwind convention) or `.an-dark` is present on any ancestor element. The following block shows every variable that changes in dark mode:
+
+<CodeBlock
+  code={`.dark, .an-dark {
+  /* Surfaces */
+  --an-surface-0: #1a1b1e;
+  --an-surface-1: #25262b;
+  --an-surface-2: #2c2e33;
+  --an-surface-3: #373a40;
+
+  /* Text */
+  --an-text-primary: #e9ecef;
+  --an-text-secondary: #909296;
+  --an-text-tertiary: #5c5f66;
+  --an-text-inverse: #1a1b1e;
+
+  /* Border */
+  --an-border-color: #373a40;
+
+  /* Status backgrounds */
+  --an-status-pending-bg: #25262b;
+  --an-status-running-bg: #1a2a3a;
+  --an-status-streaming-bg: #1a2a3a;
+  --an-status-complete-bg: #1a2e1a;
+  --an-status-error-bg: #2e1a1a;
+  --an-status-warning-bg: #2e2a1a;
+  --an-status-approval-bg: #2a1a2e;
+  --an-status-skipped-bg: #25262b;
+  --an-status-cancelled-bg: #25262b;
+
+  /* Budget colors */
+  --an-budget-input: #4dabf7;
+  --an-budget-output: #69db7c;
+  --an-budget-system: #da77f2;
+  --an-budget-cache: #909296;
+
+  /* Diff colors */
+  --an-diff-add: #3fb950;
+  --an-diff-add-bg: rgba(63, 185, 80, 0.15);
+  --an-diff-remove: #f85149;
+  --an-diff-remove-bg: rgba(248, 81, 73, 0.15);
+  --an-diff-hunk-bg: rgba(51, 154, 240, 0.1);
+
+  /* Shadows */
+  --an-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --an-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --an-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+}`}
+  lang="css"
+/>
+
+<Callout variant="tip">
+  Status foreground colors (e.g., `--an-status-running`, `--an-status-error`) are intentionally the same in both light and dark mode. They are chosen for sufficient contrast on both light and dark backgrounds.
+</Callout>
+
+---
+
+## Overriding Variables
+
+Because of the `@layer` architecture, overriding variables is straightforward. Place your overrides in any CSS file that loads after the library.
+
+### Match your brand colors
+
+<CodeBlock
+  code={`/* Override status colors to match a purple/indigo brand */
+:root {
+  --an-status-running: #6366f1;
+  --an-status-running-bg: #eef2ff;
+  --an-status-complete: #22c55e;
+  --an-status-complete-bg: #f0fdf4;
+  --an-status-approval: #8b5cf6;
+  --an-status-approval-bg: #f5f3ff;
+}
+
+.dark, .an-dark {
+  --an-status-running-bg: #1e1b4b;
+  --an-status-complete-bg: #14532d;
+  --an-status-approval-bg: #2e1065;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+### Use your app's surface colors
+
+<CodeBlock
+  code={`/* Slate palette from Tailwind */
+:root {
+  --an-surface-0: #f8fafc;
+  --an-surface-1: #f1f5f9;
+  --an-surface-2: #e2e8f0;
+  --an-surface-3: #cbd5e1;
+  --an-border-color: #94a3b8;
+}
+
+.dark, .an-dark {
+  --an-surface-0: #0f172a;
+  --an-surface-1: #1e293b;
+  --an-surface-2: #334155;
+  --an-surface-3: #475569;
+  --an-border-color: #475569;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+### Use a custom font
+
+<CodeBlock
+  code={`/* Swap in your own typeface */
+:root {
+  --an-font-sans: 'Inter', 'Helvetica Neue', sans-serif;
+  --an-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+### Tighten up spacing
+
+<CodeBlock
+  code={`/* More compact layout */
+:root {
+  --an-space-3: 0.5rem;
+  --an-space-4: 0.75rem;
+  --an-space-5: 1rem;
+  --an-space-6: 1.25rem;
+  --an-radius-md: 4px;
+  --an-radius-lg: 6px;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+### Disable animations
+
+<CodeBlock
+  code={`/* Remove all transitions */
+:root {
+  --an-duration-fast: 0ms;
+  --an-duration-normal: 0ms;
+  --an-duration-slow: 0ms;
+}`}
+  lang="css"
+  filename="globals.css"
+/>
+
+### Scope overrides to a container
+
+You can also scope overrides to a specific element so they only affect components within that subtree:
+
+<CodeBlock
+  code={`.my-sidebar {
+  --an-surface-0: #f0f4ff;
+  --an-surface-1: #e0e8ff;
+  --an-border-color: #c7d2fe;
+  --an-status-running: #4f46e5;
+}
+
+/* Only agent-native components inside .my-sidebar
+   will pick up these values */`}
+  lang="css"
+  filename="globals.css"
+/>
+
+---
+
+## Related
+
+- [Theming & Dark Mode](/docs/getting-started/theming) -- Quick-start theming guide
+- [Tailwind Integration](/docs/getting-started/tailwind) -- Using Tailwind classes with agent-native

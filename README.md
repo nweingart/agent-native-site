@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# agent-native-site
 
-## Getting Started
+Documentation site for [agent-native](https://github.com/nedweingart/agent-native) — a headless React component library for AI agent interfaces.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router)
+- **Tailwind CSS 4**
+- **MDX** for documentation pages
+- **Shiki** for syntax highlighting
+- **Fuse.js** for client-side search
+
+## Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+The build script generates the search index before running the Next.js build.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── docs/                 # Documentation pages (MDX)
+│   │   ├── getting-started/  # Installation, Quick Start, Theming, Tailwind
+│   │   ├── components/       # 19 component doc pages
+│   │   ├── hooks/            # 7 hook doc pages
+│   │   ├── types/            # Type reference
+│   │   ├── customization/    # CSS Variables, classNames, Render Slots, Data Attributes
+│   │   ├── changelog/        # Version history
+│   │   └── faq/              # FAQ & Troubleshooting
+│   ├── globals.css           # Theme variables & prose styles
+│   ├── layout.tsx            # Root layout with theme support
+│   └── page.tsx              # Landing page
+├── components/
+│   ├── demos/                # Interactive demo components
+│   ├── docs/                 # Sidebar navigation
+│   ├── landing/              # Hero, Footer, etc.
+│   ├── mdx/                  # CodeBlock, PropsTable, LiveDemo, etc.
+│   └── ui/                   # Badge, CopyButton, Tabs
+├── lib/
+│   ├── docs-nav.ts           # Navigation structure
+│   ├── highlight.ts          # Shiki syntax highlighting
+│   └── version.ts            # Library version constant
+└── mdx-components.tsx        # MDX component overrides
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Adding a Doc Page
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Create a directory under `src/app/docs/<section>/<slug>/`
+2. Add a `page.mdx` file with your content
+3. Import MDX components (`CodeBlock`, `PropsTable`, `LiveDemo`, etc.) at the top
+4. Add the page to `src/lib/docs-nav.ts` in the appropriate section
+5. Run `npm run build` to regenerate the search index

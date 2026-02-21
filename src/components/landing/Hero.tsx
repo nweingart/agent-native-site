@@ -1,5 +1,6 @@
 import { HeroTabbedDemo } from "./HeroTabbedDemo";
 import { CopyButton } from "@/components/ui/CopyButton";
+import { LIBRARY_VERSION } from "@/lib/version";
 import Link from "next/link";
 
 const installCmd = "npm install agent-native";
@@ -16,7 +17,7 @@ export function Hero() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-sm text-muted mb-6">
             <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-            v0.1.0 on npm
+            v{LIBRARY_VERSION} on npm
           </div>
 
           {/* Headline */}
@@ -45,6 +46,12 @@ export function Hero() {
               className="inline-flex items-center justify-center rounded-lg bg-foreground px-6 py-3 text-sm font-semibold text-background hover:bg-foreground/90 transition-colors"
             >
               Get Started
+            </Link>
+            <Link
+              href="/docs/components/agent-timeline"
+              className="inline-flex items-center justify-center rounded-lg border border-border px-6 py-3 text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+            >
+              Browse Components
             </Link>
             <a
               href="https://github.com/nedweingart/agent-native"

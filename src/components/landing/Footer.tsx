@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LIBRARY_VERSION } from "@/lib/version";
 
 export function Footer() {
   return (
@@ -7,7 +8,7 @@ export function Footer() {
         <div className="flex items-center gap-3">
           <span className="font-semibold text-lg">agent-native</span>
           <span className="text-xs text-muted bg-surface-2 px-2 py-0.5 rounded-full">
-            v0.1.0
+            v{LIBRARY_VERSION}
           </span>
         </div>
 

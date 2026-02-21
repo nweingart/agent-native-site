@@ -1,0 +1,180 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# FAQ & Troubleshooting
+
+Common questions and solutions for agent-native.
+
+---
+
+## Styles aren't showing up
+
+Make sure you've imported the stylesheet. Add this to your `globals.css` or root layout:
+
+<CodeBlock
+  code={`@import "agent-native/styles";`}
+  lang="css"
+  filename="globals.css"
+/>
+
+If you're using a bundler that doesn't resolve package CSS imports, try the full path:
+
+<CodeBlock
+  code={`@import "agent-native/dist/styles.css";`}
+  lang="css"
+/>
+
+## Dark mode isn't working
+
+agent-native activates dark mode when `.dark` or `.an-dark` is present on any ancestor element:
+
+<CodeBlock
+  code={`<!-- Tailwind convention -->
+<html class="dark">
+
+<!-- Library's own class -->
+<html class="an-dark">`}
+  lang="html"
+/>
+
+If you're using Tailwind's `darkMode: "class"` strategy, make sure your root element actually has the `dark` class applied. Check your theme toggle logic.
+
+<Callout variant="info">
+  If neither `.dark` nor `.an-dark` is present, components render in light mode.
+</Callout>
+
+## Tailwind classes aren't overriding library styles
+
+All library styles are wrapped in `@layer agent-native`. This means:
+
+1. Your unlayered CSS automatically wins
+2. Tailwind utilities automatically win
+3. No `!important` needed
+
+If overrides still aren't applying, make sure you're using the `classNames` prop — not external selectors targeting internal class names:
+
+<CodeBlock
+  code={`// This works — classNames prop
+<AgentTimeline
+  classNames={{ step: "rounded-xl bg-slate-900" }}
+/>
+
+// This may not work — external selector
+// .my-timeline .an-timeline__step { ... }`}
+  lang="tsx"
+/>
+
+## TypeScript can't find the module
+
+Make sure `agent-native` is installed:
+
+<CodeBlock
+  code={`npm install agent-native`}
+  lang="bash"
+/>
+
+If you're still seeing errors, check that your `tsconfig.json` has `"moduleResolution": "bundler"` or `"node16"`:
+
+<CodeBlock
+  code={`{
+  "compilerOptions": {
+    "moduleResolution": "bundler"
+  }
+}`}
+  lang="json"
+  filename="tsconfig.json"
+/>
+
+## Auto-scroll isn't working
+
+The `useAutoScroll` hook requires a ref to a scroll container with a fixed height and overflow:
+
+<CodeBlock
+  code={`function Timeline() {
+  const containerRef = useAutoScroll(steps);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ height: 500, overflowY: "auto" }}
+    >
+      <AgentTimeline steps={steps} />
+    </div>
+  );
+}`}
+  lang="tsx"
+/>
+
+Common issues:
+- The container has no fixed height (auto-scroll needs a constrained container)
+- Missing `overflow-y: auto` on the container
+- The ref isn't attached to the scrollable element
+
+## SSR / Server Components
+
+All agent-native components use React state and effects internally, so they're client components. In Next.js App Router, wrap them in a client boundary:
+
+<CodeBlock
+  code={`"use client";
+
+import { AgentTimeline } from "agent-native";
+
+export function MyTimeline({ steps }) {
+  return <AgentTimeline steps={steps} />;
+}`}
+  lang="tsx"
+  filename="components/MyTimeline.tsx"
+/>
+
+<Callout variant="info">
+  You only need `"use client"` on the file that imports agent-native components. Parent server components can still pass data as props.
+</Callout>
+
+## Bundle size
+
+agent-native is tree-shakeable. Only the components you import are included in your bundle:
+
+- **Full library**: ~40KB minified (~15KB gzipped)
+- **Typical usage** (5-8 components): ~15-25KB gzipped
+- **CSS**: ~4KB gzipped
+
+To keep your bundle small, import only what you need:
+
+<CodeBlock
+  code={`// Good — tree-shakeable
+import { AgentTimeline, StreamingText } from "agent-native";
+
+// Also good — same result with modern bundlers
+import { AgentTimeline } from "agent-native";
+import { StreamingText } from "agent-native";`}
+  lang="typescript"
+/>
+
+## className vs classNames
+
+- **`className`** is a shortcut that applies to the root element only
+- **`classNames`** is a structured object that targets specific internal elements
+- Both can be used together — they merge via clsx
+
+<CodeBlock
+  code={`// className → root element only
+<AgentTimeline className="my-4 border rounded-lg" />
+
+// classNames → target specific parts
+<AgentTimeline
+  classNames={{
+    step: "rounded-xl",
+    indicator: "ring-2",
+    connector: "opacity-50",
+  }}
+/>
+
+// Both together — className merges into classNames.root
+<AgentTimeline
+  className="my-4"
+  classNames={{ step: "rounded-xl" }}
+/>`}
+  lang="tsx"
+/>
+
+See the [classNames reference](/docs/customization/class-names) for all available keys per component.

@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/docs/Sidebar";
+import { SearchDialog } from "@/components/SearchDialog";
 
 export default function DocsLayout({
   children,
@@ -11,6 +12,7 @@ export default function DocsLayout({
       <main className="flex-1 min-w-0 px-6 py-12 lg:px-12">
         <div className="prose max-w-3xl mx-auto">{children}</div>
       </main>
+      <SearchDialog />
     </div>
   );
 }

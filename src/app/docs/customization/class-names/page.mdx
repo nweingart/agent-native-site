@@ -1,0 +1,244 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { ClassNamesTable } from "@/components/mdx/ClassNamesTable";
+import { Callout } from "@/components/mdx/Callout";
+
+# classNames
+
+Every agent-native component accepts a `classNames` prop for targeted styling of internal elements.
+
+## How It Works
+
+Components accept two styling props:
+
+- **`className`** — Shortcut that applies to the root element only
+- **`classNames`** — Structured object targeting specific internal elements
+
+Both can be used together. They merge via `cn()` (clsx) with the library's defaults:
+
+<CodeBlock
+  code={`<AgentTimeline
+  className="my-4"
+  classNames={{
+    step: "rounded-xl",
+    indicator: "ring-2 ring-offset-2",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+<Callout variant="info">
+  Library styles use `@layer agent-native`, so your classes and Tailwind utilities automatically win — no `!important` needed.
+</Callout>
+
+---
+
+## Component Reference
+
+### AgentTimeline
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root timeline container" },
+    { key: "step", target: "Each step row" },
+    { key: "indicator", target: "Step status indicator circle" },
+    { key: "stepBody", target: "Step body (label + description + elapsed)" },
+    { key: "connector", target: "Connector line between steps" },
+    { key: "tier", target: "Tier (parallel group) container" },
+    { key: "tierHeader", target: "Tier header row" },
+    { key: "approval", target: "Approval gate container" },
+    { key: "approveButton", target: "Approve button" },
+    { key: "rejectButton", target: "Reject button" },
+    { key: "toolCall", target: "Individual tool call row" },
+    { key: "toolCallList", target: "Tool call list container" },
+    { key: "artifact", target: "Artifact row" },
+  ]}
+/>
+
+### StreamingText
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "text", target: "Text content span" },
+    { key: "cursor", target: "Blinking cursor element" },
+  ]}
+/>
+
+### ThinkingIndicator
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "animation", target: "Animation container (dots/spinner)" },
+    { key: "label", target: "Label text" },
+  ]}
+/>
+
+### AgentStatusBar
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "status", target: "Status section" },
+    { key: "statusDot", target: "Status indicator dot" },
+    { key: "statusLabel", target: "Status label text" },
+    { key: "tokens", target: "Token usage display" },
+    { key: "elapsed", target: "Elapsed time display" },
+    { key: "cost", target: "Cost display" },
+    { key: "model", target: "Model name display" },
+    { key: "divider", target: "Divider between sections" },
+  ]}
+/>
+
+### DiffViewer
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "header", target: "File header bar" },
+    { key: "headerPath", target: "File path in header" },
+    { key: "headerBadge", target: "Status badge (Added/Modified/Deleted)" },
+    { key: "hunk", target: "Diff hunk container" },
+    { key: "hunkHeader", target: "Hunk header line (@@)" },
+    { key: "line", target: "Individual diff line" },
+    { key: "lineNumber", target: "Line number cell" },
+    { key: "lineContent", target: "Line content cell" },
+    { key: "addedLine", target: "Added line styling" },
+    { key: "removedLine", target: "Removed line styling" },
+    { key: "contextLine", target: "Context (unchanged) line styling" },
+  ]}
+/>
+
+### TerminalOutput
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "header", target: "Header bar" },
+    { key: "title", target: "Command title" },
+    { key: "exitCode", target: "Exit code badge" },
+    { key: "body", target: "Content body" },
+    { key: "line", target: "Individual output line" },
+    { key: "lineNumber", target: "Line number" },
+  ]}
+/>
+
+### TaskTree
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "node", target: "Node item" },
+    { key: "nodeRow", target: "Node row (label + status)" },
+    { key: "indicator", target: "Status indicator" },
+    { key: "label", target: "Node label text" },
+    { key: "description", target: "Node description" },
+    { key: "children", target: "Children list container" },
+    { key: "connector", target: "Vertical connector line" },
+  ]}
+/>
+
+### AgentHandoff
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "agent", target: "Agent card" },
+    { key: "agentHeader", target: "Agent header section" },
+    { key: "agentName", target: "Agent name text" },
+    { key: "agentStatus", target: "Agent status text" },
+    { key: "agentTask", target: "Agent task description" },
+    { key: "handoffArrow", target: "Handoff arrow between agents" },
+    { key: "handoffLabel", target: "Handoff label/task" },
+    { key: "steps", target: "Agent steps list" },
+  ]}
+/>
+
+### ContextBudget
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "bar", target: "Progress bar" },
+    { key: "segment", target: "Bar segment (system/input/output/cache)" },
+    { key: "label", target: "Segment label" },
+    { key: "legend", target: "Legend container" },
+    { key: "remaining", target: "Remaining tokens label" },
+  ]}
+/>
+
+### CostTracker
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "summary", target: "Summary section" },
+    { key: "summaryTotal", target: "Total cost display" },
+    { key: "summaryModel", target: "Per-model cost text" },
+    { key: "table", target: "Table wrapper" },
+    { key: "tableHeader", target: "Table header row" },
+    { key: "tableRow", target: "Table row" },
+    { key: "tableCell", target: "Table cell" },
+  ]}
+/>
+
+### PermissionBadges
+
+<ClassNamesTable
+  keys={[
+    { key: "root", target: "Root container" },
+    { key: "badge", target: "Individual badge" },
+    { key: "badgeIcon", target: "Badge icon (checkmark/x)" },
+    { key: "badgeName", target: "Permission name text" },
+    { key: "group", target: "Category group container" },
+    { key: "groupLabel", target: "Group category label" },
+  ]}
+/>
+
+---
+
+## Tailwind Examples
+
+Custom step styling with rounded corners and padding:
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}
+  classNames={{
+    step: "rounded-xl px-4 py-3 shadow-sm",
+    indicator: "ring-2 ring-offset-2 ring-offset-background",
+    connector: "opacity-50",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+Brand-colored status bar:
+
+<CodeBlock
+  code={`<AgentStatusBar
+  status="thinking"
+  classNames={{
+    root: "bg-indigo-950 border-indigo-800",
+    statusDot: "bg-indigo-400",
+    statusLabel: "text-indigo-200",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+Compact diff viewer:
+
+<CodeBlock
+  code={`<DiffViewer
+  files={files}
+  classNames={{
+    root: "text-xs",
+    header: "py-1 px-2",
+    lineNumber: "w-8 text-right",
+    addedLine: "bg-green-500/10",
+    removedLine: "bg-red-500/10",
+  }}
+/>`}
+  lang="tsx"
+/>

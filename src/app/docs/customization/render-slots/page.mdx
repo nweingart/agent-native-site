@@ -1,0 +1,337 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# Render Slots
+
+Render props let you replace specific parts of a component's UI while keeping the rest of the layout, state management, and behavior intact. Instead of rebuilding an entire component from scratch, you swap out just the piece you need to customize.
+
+Each render slot receives the relevant data object and must return a `ReactNode`. The component handles positioning, animations, accessibility attributes, and state transitions around whatever you render.
+
+<Callout variant="info">
+  Render props receive the full data object for their scope and must return `React.ReactNode`. If your render function returns `null`, the slot is hidden entirely — the component skips rendering that element without affecting the surrounding layout.
+</Callout>
+
+---
+
+## AgentTimeline Slots
+
+`AgentTimeline` exposes five render prop slots that let you customize individual pieces of each step's UI.
+
+### renderStepContent
+
+Replace the entire step body content, including the label, description, and elapsed time.
+
+<CodeBlock
+  code={`renderStepContent?: (step: AgentStep) => React.ReactNode`}
+  lang="ts"
+  filename="Type Signature"
+/>
+
+Use this when you need full control over what appears in the step body — for example, adding metadata badges, custom progress bars, or domain-specific formatting.
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep } from 'agent-native';
+
+<AgentTimeline
+  steps={steps}
+  renderStepContent={(step) => (
+    <div className="flex flex-col gap-1">
+      <span className="font-semibold text-sm">{step.label}</span>
+      {step.description && (
+        <span className="text-xs text-zinc-400">{step.description}</span>
+      )}
+      {step.status === 'error' && (
+        <span className="text-xs text-red-400 font-mono">
+          Error: {step.error}
+        </span>
+      )}
+      {step.metadata?.tokens && (
+        <span className="text-xs text-zinc-500">
+          {step.metadata.tokens} tokens used
+        </span>
+      )}
+    </div>
+  )}
+/>`}
+  lang="tsx"
+  filename="CustomStepContent.tsx"
+/>
+
+### renderStepIndicator
+
+Replace the status indicator circle or icon that appears to the left of each step.
+
+<CodeBlock
+  code={`renderStepIndicator?: (step: AgentStep) => React.ReactNode`}
+  lang="ts"
+  filename="Type Signature"
+/>
+
+Use this when you want custom icons, brand-specific indicators, or animated status markers that differ from the built-in spinner/checkmark/dot.
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep } from 'agent-native';
+import { CheckCircle, Loader2, Circle, XCircle } from 'lucide-react';
+
+const statusIcons: Record<string, React.ReactNode> = {
+  complete: <CheckCircle className="w-5 h-5 text-green-400" />,
+  running: <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />,
+  error: <XCircle className="w-5 h-5 text-red-400" />,
+  pending: <Circle className="w-5 h-5 text-zinc-600" />,
+};
+
+<AgentTimeline
+  steps={steps}
+  renderStepIndicator={(step) => (
+    <div className="flex items-center justify-center w-8 h-8">
+      {statusIcons[step.status] ?? statusIcons.pending}
+    </div>
+  )}
+/>`}
+  lang="tsx"
+  filename="CustomStepIndicator.tsx"
+/>
+
+### renderTierHeader
+
+Replace the tier header row that labels parallel execution groups.
+
+<CodeBlock
+  code={`renderTierHeader?: (tier: StepTier) => React.ReactNode`}
+  lang="ts"
+  filename="Type Signature"
+/>
+
+Use this when you want to add extra context to tier groups, such as showing the number of steps in the tier, an icon for the type of work, or a progress summary.
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep, StepTier } from 'agent-native';
+
+<AgentTimeline
+  steps={steps}
+  tiers={tiers}
+  renderTierHeader={(tier) => (
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800/50 rounded-md">
+      <span className="text-xs font-medium text-zinc-300">
+        {tier.label}
+      </span>
+      <span className="text-xs text-zinc-500">
+        ({tier.stepIds.length} parallel tasks)
+      </span>
+    </div>
+  )}
+/>`}
+  lang="tsx"
+  filename="CustomTierHeader.tsx"
+/>
+
+### renderToolContent
+
+Replace the tool call display within a step. This controls how each individual tool invocation is rendered.
+
+<CodeBlock
+  code={`renderToolContent?: (toolCall: ToolCall) => React.ReactNode`}
+  lang="ts"
+  filename="Type Signature"
+/>
+
+Use this when you want to render tool calls with syntax-highlighted inputs, collapsible output sections, or visual representations of the tool's work (like a file diff preview for an edit tool).
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { ToolCall } from 'agent-native';
+
+<AgentTimeline
+  steps={steps}
+  showToolCalls
+  renderToolContent={(toolCall) => (
+    <div className="border border-zinc-700 rounded-md p-2 text-xs">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="font-mono font-semibold text-blue-300">
+          {toolCall.name}
+        </span>
+        <span className={
+          toolCall.status === 'success'
+            ? 'text-green-400'
+            : toolCall.status === 'error'
+            ? 'text-red-400'
+            : 'text-zinc-500'
+        }>
+          {toolCall.status}
+        </span>
+      </div>
+      {toolCall.input && (
+        <pre className="text-zinc-400 whitespace-pre-wrap break-all">
+          {JSON.stringify(toolCall.input, null, 2)}
+        </pre>
+      )}
+      {toolCall.output && (
+        <details className="mt-1">
+          <summary className="text-zinc-500 cursor-pointer">Output</summary>
+          <pre className="mt-1 text-zinc-400 whitespace-pre-wrap break-all">
+            {typeof toolCall.output === 'string'
+              ? toolCall.output
+              : JSON.stringify(toolCall.output, null, 2)}
+          </pre>
+        </details>
+      )}
+    </div>
+  )}
+/>`}
+  lang="tsx"
+  filename="CustomToolContent.tsx"
+/>
+
+### renderArtifactContent
+
+Replace the artifact display within a step. Artifacts represent outputs like generated files, images, or structured data.
+
+<CodeBlock
+  code={`renderArtifactContent?: (artifact: Artifact) => React.ReactNode`}
+  lang="ts"
+  filename="Type Signature"
+/>
+
+Use this when you want to render artifacts with previews (e.g., image thumbnails, code previews), download links, or domain-specific formatting based on the artifact kind.
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { Artifact } from 'agent-native';
+
+<AgentTimeline
+  steps={steps}
+  showToolCalls
+  renderArtifactContent={(artifact) => (
+    <div className="flex items-center gap-3 p-2 bg-zinc-800/50 rounded-md">
+      <div className="w-8 h-8 rounded bg-zinc-700 flex items-center justify-center text-xs">
+        {artifact.kind === 'code' ? '</>' : artifact.kind === 'image' ? 'IMG' : 'DOC'}
+      </div>
+      <div className="flex flex-col">
+        <span className="text-sm font-medium text-zinc-200">
+          {artifact.title}
+        </span>
+        <span className="text-xs text-zinc-500">{artifact.kind}</span>
+      </div>
+    </div>
+  )}
+/>`}
+  lang="tsx"
+  filename="CustomArtifactContent.tsx"
+/>
+
+---
+
+## TaskTree Slots
+
+### renderNodeContent
+
+Replace the content of each task node in the tree. This controls the label, description, and any additional information rendered inside each node row.
+
+<CodeBlock
+  code={`renderNodeContent?: (node: TaskNode) => React.ReactNode`}
+  lang="ts"
+  filename="Type Signature"
+/>
+
+Use this when you want to display extra metadata on each node, add inline actions, or change how status and labels are presented. The tree structure, expand/collapse behavior, connectors, and status indicators remain managed by the component.
+
+<CodeBlock
+  code={`import { TaskTree } from 'agent-native';
+import type { TaskNode } from 'agent-native';
+
+<TaskTree
+  tasks={tasks}
+  defaultExpandAll
+  renderNodeContent={(node) => (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex flex-col">
+        <span className="text-sm font-medium">{node.label}</span>
+        {node.description && (
+          <span className="text-xs text-zinc-500">{node.description}</span>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        {node.status === 'error' && (
+          <button
+            className="text-xs text-red-400 hover:text-red-300"
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log('Retry', node.id);
+            }}
+          >
+            Retry
+          </button>
+        )}
+        {node.children && (
+          <span className="text-xs text-zinc-600">
+            {node.children.filter(c => c.status === 'complete').length}
+            /{node.children.length}
+          </span>
+        )}
+      </div>
+    </div>
+  )}
+/>`}
+  lang="tsx"
+  filename="CustomNodeContent.tsx"
+/>
+
+---
+
+## Combining Slots
+
+You can use multiple render props together on the same component. Each slot is independent — customizing one does not affect the others.
+
+<CodeBlock
+  code={`import { AgentTimeline } from 'agent-native';
+import type { AgentStep, StepTier, ToolCall } from 'agent-native';
+import { CheckCircle, Loader2, Circle } from 'lucide-react';
+
+function CustomTimeline({ steps, tiers }: {
+  steps: AgentStep[];
+  tiers: StepTier[];
+}) {
+  return (
+    <AgentTimeline
+      steps={steps}
+      tiers={tiers}
+      showToolCalls
+      showElapsedTime
+
+      renderStepIndicator={(step) => {
+        if (step.status === 'complete') return <CheckCircle className="w-5 h-5 text-emerald-400" />;
+        if (step.status === 'running') return <Loader2 className="w-5 h-5 text-sky-400 animate-spin" />;
+        return <Circle className="w-5 h-5 text-zinc-600" />;
+      }}
+
+      renderStepContent={(step) => (
+        <div>
+          <span className="font-medium">{step.label}</span>
+          {step.description && (
+            <p className="text-xs text-zinc-400 mt-0.5">{step.description}</p>
+          )}
+        </div>
+      )}
+
+      renderTierHeader={(tier) => (
+        <div className="text-xs font-mono text-zinc-500 uppercase tracking-wider">
+          {tier.label} ({tier.stepIds.length})
+        </div>
+      )}
+
+      renderToolContent={(toolCall) => (
+        <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
+          <span className="text-blue-300">{toolCall.name}</span>
+          <span className="text-zinc-600">-</span>
+          <span>{toolCall.status}</span>
+        </div>
+      )}
+    />
+  );
+}`}
+  lang="tsx"
+  filename="CombinedSlots.tsx"
+/>

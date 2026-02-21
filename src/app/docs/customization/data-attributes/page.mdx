@@ -1,0 +1,174 @@
+import { CodeBlock } from "@/components/mdx/CodeBlock";
+import { Callout } from "@/components/mdx/Callout";
+
+# Data Attributes
+
+All agent-native components emit semantic `data-*` attributes on their DOM elements. Use them for CSS targeting, Tailwind modifiers, and test selectors.
+
+---
+
+## AgentTimeline
+
+**TimelineStep:**
+- `data-step-id` — The step's unique ID
+- `data-status` — `pending` | `running` | `streaming` | `waiting_approval` | `complete` | `error` | `skipped` | `cancelled`
+
+**TimelineToolCall:**
+- `data-tool-call-id` — The tool call's unique ID
+- `data-status` — `pending` | `running` | `complete` | `error`
+
+**TimelineArtifact:**
+- `data-artifact-id` — The artifact's unique ID
+
+**TimelineTier:**
+- `data-tier-id` — The tier's unique ID
+
+**TimelineApprovalGate:**
+- `data-approval-id` — The approval request's unique ID
+
+## DiffViewer
+
+- `data-view` — `unified` | `split` (on root element)
+- `data-line-type` — `add` | `remove` | `context` | `empty` (on each line)
+
+## AgentStatusBar
+
+- `data-status` — `idle` | `thinking` | `acting` | `waiting` | `error` | `complete`
+
+## AgentHandoff
+
+- `data-agent-id` — The agent's unique ID
+- `data-status` — `idle` | `running` | `complete` | `error`
+- `data-layout` — `vertical` | `horizontal` (on root element)
+
+## TerminalOutput
+
+- `data-streaming` — Present (boolean attribute) when output is actively streaming
+
+## ContextBudget
+
+- `data-segment` — `system` | `input` | `output` | `cache` (on each bar segment)
+- `data-layout` — `bar` | `ring` (on root element)
+- `data-threshold` — `normal` | `warning` | `danger` (on root element)
+
+## CostTracker
+
+- `data-group-by` — `model` | `none` (on root element)
+- `data-entry-id` — The cost entry's unique ID (on each row)
+
+## PermissionBadges
+
+- `data-layout` — `inline` | `grid` (on root element)
+- `data-permission-id` — The permission's unique ID
+- `data-granted` — `true` | `false`
+
+---
+
+## CSS Targeting
+
+Use attribute selectors to style components based on state:
+
+<CodeBlock
+  code={`/* Highlight running steps */
+[data-status="running"] {
+  box-shadow: 0 0 0 2px rgba(51, 154, 240, 0.4);
+}
+
+/* Red glow on error */
+[data-status="error"] {
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.4);
+}
+
+/* Dim skipped steps */
+[data-status="skipped"] {
+  opacity: 0.5;
+}
+
+/* Style approval gates differently */
+[data-approval-id] {
+  border-left: 3px solid var(--an-status-approval);
+}
+
+/* Warning state on context budget */
+[data-threshold="warning"] {
+  border-color: var(--an-status-warning);
+}
+
+[data-threshold="danger"] {
+  border-color: var(--an-status-error);
+}`}
+  lang="css"
+/>
+
+## Tailwind Data Attributes
+
+Tailwind's `data-[]` modifier works with all data attributes:
+
+<CodeBlock
+  code={`<AgentTimeline
+  steps={steps}
+  classNames={{
+    step: "data-[status=running]:ring-2 data-[status=running]:ring-blue-400 data-[status=error]:ring-red-400",
+    indicator: "data-[status=complete]:bg-green-500",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+More examples:
+
+<CodeBlock
+  code={`/* Conditional styles via Tailwind data attributes */
+<DiffViewer
+  files={files}
+  classNames={{
+    root: "data-[view=split]:grid data-[view=split]:grid-cols-2",
+  }}
+/>
+
+<ContextBudget
+  data={budget}
+  classNames={{
+    root: "data-[threshold=danger]:border-red-500 data-[threshold=warning]:border-yellow-500",
+  }}
+/>
+
+<PermissionBadges
+  permissions={perms}
+  classNames={{
+    badge: "data-[granted=false]:opacity-50 data-[granted=true]:border-green-500",
+  }}
+/>`}
+  lang="tsx"
+/>
+
+## Testing
+
+Data attributes provide stable selectors for tests:
+
+<CodeBlock
+  code={`// Find a specific step
+const step = screen.getByTestId('step-1'); // if using data-testid
+// Or use data-step-id directly:
+const step = container.querySelector('[data-step-id="step-1"]');
+
+// Assert status
+expect(step).toHaveAttribute('data-status', 'complete');
+
+// Find all running steps
+const running = container.querySelectorAll('[data-status="running"]');
+expect(running).toHaveLength(2);
+
+// Check permission state
+const badge = container.querySelector('[data-permission-id="file-read"]');
+expect(badge).toHaveAttribute('data-granted', 'true');
+
+// Verify budget threshold
+const budget = container.querySelector('[data-threshold]');
+expect(budget).toHaveAttribute('data-threshold', 'warning');`}
+  lang="typescript"
+/>
+
+<Callout variant="tip">
+  Data attributes are stable across versions — they're part of the public API. Use them instead of class names for test selectors.
+</Callout>

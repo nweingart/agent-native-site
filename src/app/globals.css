@@ -2,6 +2,21 @@
 @import "agent-native/styles";
 
 @theme inline {
+  --color-background: #fafafa;
+  --color-foreground: #09090b;
+  --color-muted: #52525b;
+  --color-muted-foreground: #71717a;
+  --color-surface: #f4f4f5;
+  --color-surface-2: #e4e4e7;
+  --color-surface-3: #d4d4d8;
+  --color-border: #e4e4e7;
+  --color-accent: #27272a;
+  --color-accent-foreground: #09090b;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+.dark {
   --color-background: #09090b;
   --color-foreground: #fafafa;
   --color-muted: #a1a1aa;
@@ -12,11 +27,13 @@
   --color-border: #27272a;
   --color-accent: #e4e4e7;
   --color-accent-foreground: #fafafa;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 html {
+  color-scheme: light;
+}
+
+html.dark {
   color-scheme: dark;
 }
 
@@ -26,6 +43,19 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Shiki dual-theme CSS variables */
+html:not(.dark) .shiki,
+html:not(.dark) .shiki span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+}
+
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
 }
 
 /* Prose styling for MDX content */
